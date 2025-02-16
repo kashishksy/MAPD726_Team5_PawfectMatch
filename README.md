@@ -20,15 +20,18 @@ A React Native application that helps users find and adopt pets from their nearb
 1. Clone the repository:
    ```sh
    git clone https://github.com/yourusername/pet-adoption-app.git
-   cd pet-adoption-app
+   cd MAPD726_Team5_PawfectMatch
    ```
 2. Install dependencies:
    ```sh
+   cd backend
+   npm install
+   cd frontend
    npm install
    ```
 3. Start the application:
    ```sh
-   npx expo start
+   npm start
    ```
 
 
