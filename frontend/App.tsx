@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { View, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import SplashScreen from './components/SplashScreen';
+import LoginScreen from './screens/LoginScreen';
 
 
 const App = () => {
@@ -11,7 +12,7 @@ const App = () => {
     setTimeout(() => {
 
       setIsLoading(false)
-    }, 10000); //adding a 3 second delay 
+    }, 5000); //adding a 5 second delay 
 
 
   }, [])
@@ -25,8 +26,7 @@ const App = () => {
   return (
    
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome to PawfectMatch!</Text>
-      {/* Add your main app content here */}
+      <LoginScreen />
     </View>
 
    
