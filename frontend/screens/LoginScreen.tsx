@@ -7,7 +7,8 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
-  Dimensions // Import Dimensions
+  Dimensions, // Import Dimensions
+  TouchableWithoutFeedback
 } from "react-native";
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Alert } from "react-native";
@@ -62,12 +63,24 @@ const LoginScreen = () => {
     // Handle OTP verification
   };
 
+  const handleOutsidePress = () => {
+    if (showOTP) {
+      setShowOTP(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {showOTP && (
-        <View style={styles.otpOverlay}>
-          <OTPInput onSubmit={handleOTPSubmit} />
-        </View>
+        <TouchableWithoutFeedback onPress={handleOutsidePress}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
+              <View style={styles.otpOverlay}>
+                <OTPInput onSubmit={handleOTPSubmit} />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
       )}
       
       <View style={styles.logoContainer}>
@@ -170,7 +183,6 @@ const LoginScreen = () => {
         {showOTP && (
           <BlurView
             style={StyleSheet.absoluteFill}
-            blurType="light"
             blurAmount={5}
           />
         )}
@@ -364,6 +376,17 @@ const styles = StyleSheet.create({
   },
   blurredContent: {
     opacity: 0.7,
+  },
+  overlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
