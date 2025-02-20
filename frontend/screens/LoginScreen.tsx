@@ -32,7 +32,7 @@ const Checkmark: React.FC<CheckmarkProps> = ({ color }) => (
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }:any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -72,9 +72,16 @@ const LoginScreen = () => {
     setPhoneNumber(limitedNumber);
   };
 
-  const handleOTPSubmit = (otp:number) => {
-    console.log("OTP submitted:", otp);
-    // Handle OTP verification
+  const handleOTPSubmit = async (otp: string) => {
+    try {
+      // Simulate API verification
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // After successful verification, navigate to UserType screen
+      navigation.navigate('UserType');
+    } catch (error) {
+      console.error("OTP verification failed:", error);
+      Alert.alert("Error", "OTP verification failed. Please try again.");
+    }
   };
 
   const handleOutsidePress = () => {

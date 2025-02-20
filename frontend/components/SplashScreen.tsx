@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-const SplashScreen = () => {
+const SplashScreen = ({ navigation }:any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity: 0
 
   useEffect(() => {
@@ -12,7 +12,15 @@ const SplashScreen = () => {
       duration: 2000, // 2 seconds
       useNativeDriver: true, // Enable native driver for better performance
     }).start();
-  }, [fadeAnim]);
+
+    // Navigate to Login screen after 3 seconds
+    const timer = setTimeout(() => {
+      navigation.replace('Login');
+    }, 3000);
+
+    // Cleanup timer on component unmount
+    return () => clearTimeout(timer);
+  }, [fadeAnim, navigation]);
 
   return (
     <View style={styles.container}>
