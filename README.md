@@ -12,8 +12,8 @@ A React Native application that helps users find and adopt pets from their nearb
 ## 📦 Tech Stack
 - **Frontend:** React Native, Expo
 - **State Management:** Redux / Context API
-- **Backend:** Firebase / Node.js (optional)
-- **Database:** Firestore / PostgreSQL (optional)
+- **Backend:** Firebase / Node.js
+- **Database:** Firestore / PostgreSQL
 - **API Integration:** Petfinder API (or similar)
 
 ## 🛠 Installation
