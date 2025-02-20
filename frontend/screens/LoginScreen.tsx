@@ -7,16 +7,30 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
-  Dimensions, // Import Dimensions
-  TouchableWithoutFeedback
+  Dimensions,
+  TouchableWithoutFeedback,
 } from "react-native";
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { Alert } from "react-native";
-import { SpinnerSimpleUsageShowcase } from '../components/LoadingSpinner';
-import OTPInput from '../components/OTPInput';
+import { SpinnerSimpleUsageShowcase } from "../components/LoadingSpinner";
+import OTPInput from "../components/OTPInput";
 import { BlurView } from "@react-native-community/blur";
+import { Svg, Path } from 'react-native-svg';
 
-const { width, height } = Dimensions.get('window'); // Get screen dimensions
+interface CheckmarkProps {
+  color: string; // Define the type of the 'color' prop as a string
+}
+
+const Checkmark: React.FC<CheckmarkProps> = ({ color }) => (
+  <Svg width={16} height={16} viewBox="0 0 24 24">
+    <Path
+      d="M20.285 6.705a1 1 0 00-1.414 0l-10.5 10.5-4.285-4.285a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0l11-11a1 1 0 000-1.414z"
+      fill={color}
+    />
+  </Svg>
+);
+
+const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 const LoginScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -42,7 +56,7 @@ const LoginScreen = () => {
     setIsLoading(true);
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
+      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
       setShowOTP(true);
     } catch (error) {
       console.error(error);
@@ -74,7 +88,7 @@ const LoginScreen = () => {
       {showOTP && (
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
           <View style={styles.overlay}>
-            <TouchableWithoutFeedback onPress={e => e.stopPropagation()}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
               <View style={styles.otpOverlay}>
                 <OTPInput onSubmit={handleOTPSubmit} />
               </View>
@@ -82,16 +96,16 @@ const LoginScreen = () => {
           </View>
         </TouchableWithoutFeedback>
       )}
-      
+
       <View style={styles.logoContainer}>
         <Image
-          source={require('../assets/images/logo.png')}
+          source={require("../assets/images/shiba_inu.png")}
           style={styles.logo}
         />
       </View>
 
       <View style={[styles.content, showOTP && styles.blurredContent]}>
-        <Text style={styles.title}>Join PawfectMatch Today 🐾</Text>
+        <Text style={styles.title}>Find Your Pawfect Match Today!</Text>
         <Text style={styles.subtitle}>A world of furry possibilities awaits you.</Text>
 
         {/* Phone Number Input */}
@@ -102,7 +116,9 @@ const LoginScreen = () => {
               <Text style={styles.countryCode}>+1</Text>
             </TouchableOpacity>
             <View style={styles.phoneNumberInput}>
-              <MaterialIcons name="phone" size={20} color="#666" style={styles.inputIcon} />
+            <Image source={require('../assets/images/phone-call.png')} // Path to your PNG file
+            style={styles.inputIcon}
+            />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"
@@ -110,7 +126,7 @@ const LoginScreen = () => {
                 value={phoneNumber}
                 onChangeText={handlePhoneNumberChange}
                 maxLength={10}
-                placeholderTextColor="#999" // Added placeholder text color
+                placeholderTextColor="#999"
               />
             </View>
           </View>
@@ -122,9 +138,7 @@ const LoginScreen = () => {
             style={styles.checkbox}
             onPress={() => setIsChecked(!isChecked)}
           >
-            {isChecked && (
-              <MaterialIcons name="check" size={16} color="#CD9B5C" />
-            )}
+            {isChecked && <Checkmark color="#FF6F61" />}
           </TouchableOpacity>
           <Text style={styles.termsText}>
             I agree to PawfectMatch{" "}
@@ -136,7 +150,7 @@ const LoginScreen = () => {
         <TouchableOpacity
           style={[
             styles.signupButton,
-            (phoneNumber.length !== 10 || !isChecked) && styles.signupButtonDisabled
+            (phoneNumber.length !== 10 || !isChecked) && styles.signupButtonDisabled,
           ]}
           onPress={handleContinue}
           disabled={phoneNumber.length !== 10 || !isChecked || isLoading}
@@ -166,7 +180,7 @@ const LoginScreen = () => {
         {/* Social Login Buttons */}
         <TouchableOpacity style={styles.socialButton}>
           <Image
-            source={require('../assets/images/google-icon.png')}
+            source={require("../assets/images/google-icon.png")}
             style={styles.socialIcon}
           />
           <Text style={styles.socialButtonText}>Continue with Google</Text>
@@ -174,19 +188,13 @@ const LoginScreen = () => {
 
         <TouchableOpacity style={styles.socialButton}>
           <Image
-            source={require('../assets/images/devicon--apple.png')}
+            source={require("../assets/images/devicon--apple.png")}
             style={styles.socialIcon}
           />
           <Text style={styles.socialButtonText}>Continue with Apple</Text>
         </TouchableOpacity>
 
-        {showOTP && (
-          <BlurView
-            style={StyleSheet.absoluteFill}
-            blurAmount={5}
-          />
-        )}
-
+        {showOTP && <BlurView style={StyleSheet.absoluteFill} blurAmount={5} />}
       </View>
     </SafeAreaView>
   );
@@ -195,44 +203,44 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#ffffff",
-  },
-  backButton: {
-    padding: 16,
+    backgroundColor: "#FFFFFF",
   },
   logoContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: height * 0.05, // Responsive margin
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: height * 0.03,
   },
   logo: {
-    width: width * 0.3, // 30% of screen width
-    height: width * 0.3, //Ensuring it's a square
-    resizeMode: 'contain',
+    width: width * 0.4,
+    height: width * 0.4,
+    resizeMode: "contain",
   },
   content: {
     flex: 1,
-    paddingHorizontal: width * 0.06, // Responsive padding
+    paddingHorizontal: width * 0.06,
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
+    fontFamily: "System",
+    color: "#333333",
     marginBottom: 8,
-    textAlign: 'center', // Centered title
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
+    fontFamily: "Merriweather-Regular",
+    color: "#666666",
     marginBottom: 32,
-    textAlign: 'center', // Centered subtitle
+    textAlign: "center",
   },
   inputGroup: {
     marginBottom: 20,
   },
   label: {
     fontSize: 14,
+    fontFamily: "Poppins-Regular",
     marginBottom: 8,
-    color: "#333",
+    color: "#333333",
   },
   phoneInputContainer: {
     flexDirection: "row",
@@ -250,6 +258,7 @@ const styles = StyleSheet.create({
   },
   countryCode: {
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
     marginRight: 4,
   },
   phoneNumberInput: {
@@ -263,10 +272,13 @@ const styles = StyleSheet.create({
   },
   inputIcon: {
     marginRight: 12,
+    height: 12,
+    width: 12
   },
   input: {
     flex: 1,
     fontSize: 16,
+    fontFamily: "Poppins-Regular",
   },
   termsContainer: {
     flexDirection: "row",
@@ -277,21 +289,23 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderWidth: 2,
-    borderColor: "#CD9B5C",
+    borderColor: "#FF6F61",
     borderRadius: 4,
     marginRight: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   termsText: {
     fontSize: 14,
-    color: "#333",
+    fontFamily: "Poppins-Regular",
+    color: "#333333",
   },
   termsLink: {
-    color: "#CD9B5C",
+    color: "#FF6F61",
+    fontFamily: "Poppins-Bold",
   },
   signupButton: {
-    backgroundColor: "#CD9B5C",
+    backgroundColor: "#FF6F61",
     borderRadius: 12,
     height: 48,
     justifyContent: "center",
@@ -299,9 +313,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   signupButtonText: {
-    color: "#FFF",
+    color: "#FFFFFF",
     fontSize: 16,
-    fontWeight: "600",
+    fontFamily: "Poppins-Bold",
   },
   loginContainer: {
     flexDirection: "row",
@@ -309,19 +323,23 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   loginText: {
-    color: "#666",
+    fontSize: 14,
+    fontFamily: "Poppins-Regular",
+    color: "#666666",
   },
   loginLink: {
-    color: "#CD9B5C",
+    color: "#FF6F61",
+    fontFamily: "Poppins-Bold",
   },
-   orContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  orContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 24,
   },
   orText: {
-    textAlign: "center",
-    color: "#666",
+    fontSize: 14,
+    fontFamily: "Poppins-Regular",
+    color: "#666666",
     marginHorizontal: 10,
   },
   line: {
@@ -343,25 +361,23 @@ const styles = StyleSheet.create({
     marginRight: 12,
     width: 24,
     height: 24,
-    resizeMode: 'contain',
+    resizeMode: "contain",
   },
   socialButtonText: {
     fontSize: 16,
-    color: "#333",
+    fontFamily: "Poppins-Regular",
+    color: "#333333",
   },
   signupButtonDisabled: {
-    backgroundColor: '#E0E0E0',
-  },
-  signupButtonTextDisabled: {
-    color: '#999',
+    backgroundColor: "#E0E0E0",
   },
   otpOverlay: {
-    position: 'absolute',
-    top: '30%',
+    position: "absolute",
+    top: "30%",
     left: 0,
     right: 0,
     zIndex: 2,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 20,
     borderRadius: 15,
     margin: 20,
@@ -378,15 +394,15 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
   overlay: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: "rgba(0,0,0,0.3)",
     zIndex: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
