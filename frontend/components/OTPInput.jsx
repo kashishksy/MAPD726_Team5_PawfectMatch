@@ -29,7 +29,8 @@ const OTPInput = ({ onSubmit }) => {
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API call
-      onSubmit(otp.join(""));
+      const otpString = otp.join("");
+      onSubmit(otpString);
     } catch (error) {
       console.error(error);
     } finally {

@@ -69,7 +69,7 @@ const UserTypeScreen = ({ navigation }:any) => {
           !selectedType && styles.continueButtonDisabled
         ]}
         disabled={!selectedType}
-        onPress={() => navigation.navigate('NextScreen')}
+        onPress={() => navigation.navigate('PetType')}
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>
