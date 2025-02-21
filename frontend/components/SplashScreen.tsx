@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
 
-const SplashScreen = ({ navigation }) => {
+const SplashScreen = ({ navigation }:any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity: 0
 
   useEffect(() => {

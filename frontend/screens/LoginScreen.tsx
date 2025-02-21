@@ -32,7 +32,7 @@ const Checkmark: React.FC<CheckmarkProps> = ({ color }) => (
 
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }:any) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

@@ -21,7 +21,7 @@ const petTypes = [
   { id: 'other', name: 'Other', emoji: '🐾' },
 ];
 
-const PetTypeScreen = ({ navigation }) => {
+const PetTypeScreen = ({ navigation }:any) => {
   const [selectedType, setSelectedType] = useState<string | null>(null);
 
   return (
