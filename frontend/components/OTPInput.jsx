@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 50,
     borderWidth: 1,
-    borderColor: "#CD9B5C",
+    borderColor: "#FF6F61",
     borderRadius: 10,
     textAlign: "center",
     fontSize: 20,
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: 20,
-    backgroundColor: "#CD9B5C",
+    backgroundColor: "#FF6F61",
     borderRadius: 10,
     height: 48,
     width: '100%',

@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   selectedOption: {
-    borderColor: '#CD9B5C',
+    borderColor: '#FF6F61',
     backgroundColor: '#FFF8F0',
   },
   optionText: {
@@ -127,11 +127,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   selectedOptionText: {
-    color: '#CD9B5C',
+    color: '#FF6F61',
     fontWeight: '500',
   },
   continueButton: {
-    backgroundColor: '#CD9B5C',
+    backgroundColor: '#FF6F61',
     padding: 16,
     borderRadius: 8,
     margin: 24,

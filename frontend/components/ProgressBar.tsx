@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   progress: {
     height: '100%',
-    backgroundColor: '#CD9B5C',
+    backgroundColor: '#FF6F61',
     borderRadius: 2,
   },
   stepText: {

@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   selectedPetOption: {
-    borderColor: '#CD9B5C',
+    borderColor: '#FF6F61',
     backgroundColor: '#FFF8F0',
   },
   emoji: {
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   continueButton: {
-    backgroundColor: '#CD9B5C',
+    backgroundColor: '#FF6F61',
     padding: 16,
     borderRadius: 8,
     margin: 24,
