@@ -1,9 +1,9 @@
 {
 	"info": {
-		"_postman_id": "f3938b50-ada0-446b-a938-27a2a96d5e77",
+		"_postman_id": "b9705694-02c0-42b3-bf55-b572e5740ec3",
 		"name": "pawfectmatch",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "34061890"
+		"_exporter_id": "1174057"
 	},
 	"item": [
 		{
@@ -16,7 +16,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\" : \"tes@gmail.com\"\r\n}",
+							"raw": "{\r\n    \"countryCode\": \"1\",\r\n    \"mobileNumber\": \"2268999126\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -24,12 +24,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/send-otp",
+							"raw": "http://localhost:3000/api/auth/send-otp",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "3000",
 							"path": [
 								"api",
 								"auth",
@@ -37,7 +37,72 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "sendOtp",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/send-otp",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"send-otp"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "72"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"48-OMt78oywm0lO9w7OCYSaGm1veRw\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Feb 2025 09:57:25 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"OTP sent successfully\",\n    \"data\": {},\n    \"error\": false\n}"
+						}
+					]
 				},
 				{
 					"name": "verify-otp",
@@ -46,7 +111,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\"    : \"tes@gmail.com\",\r\n    \"otp\" : \"186887\"\r\n}",
+							"raw": "{\r\n    \"countryCode\": \"1\",\r\n    \"mobileNumber\": \"2268999126\",\r\n    \"otp\" :\"329118\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -54,12 +119,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/verify-otp",
+							"raw": "http://localhost:3000/api/auth/verify-otp",
 							"protocol": "http",
 							"host": [
 								"localhost"
 							],
-							"port": "5000",
+							"port": "3000",
 							"path": [
 								"api",
 								"auth",
@@ -67,7 +132,420 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "verify-otp",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\",\r\n    \"otp\" :\"132724\"\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/verify-otp",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"verify-otp"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "76"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"4c-VWPROqRm2fz18940+9YFKsHLkL4\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Feb 2025 10:00:11 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"OTP verified successfully\",\n    \"data\": {},\n    \"error\": false\n}"
+						}
+					]
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fullName",
+									"value": "John Doe",
+									"type": "text"
+								},
+								{
+									"key": "countryCode",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "mobileNumber",
+									"value": "2268999124",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "Male",
+									"type": "text"
+								},
+								{
+									"key": "profileImage",
+									"type": "file",
+									"src": [
+										"/C:/Users/TechHive-01/Downloads/01.jpg",
+										"/Users/komalvastarpara/Downloads/426-4264903_user-avatar-png-picture-avatar-profile-dummy-transparent.png"
+									]
+								},
+								{
+									"key": "pet_ids",
+									"value": "[\"67b701cf560e17760845a6ce\"]",
+									"type": "text"
+								},
+								{
+									"key": "breed_ids",
+									"value": "[\"67b701d0560e17760845a6da\"]",
+									"type": "text"
+								},
+								{
+									"key": "userType",
+									"value": "Pet Owner",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/auth/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "register",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "fullName",
+											"value": "John Doe",
+											"type": "text"
+										},
+										{
+											"key": "countryCode",
+											"value": "91",
+											"type": "text"
+										},
+										{
+											"key": "mobileNumber",
+											"value": "9876543210",
+											"type": "text"
+										},
+										{
+											"key": "gender",
+											"value": "Male",
+											"type": "text"
+										},
+										{
+											"key": "profileImage",
+											"type": "file",
+											"src": "/C:/Users/TechHive-01/Downloads/01.jpg"
+										},
+										{
+											"key": "pet_ids",
+											"value": "[\"67b701cf560e17760845a6ce\"]",
+											"type": "text"
+										},
+										{
+											"key": "breed_ids",
+											"value": "[\"67b701d0560e17760845a6da\"]",
+											"type": "text"
+										},
+										{
+											"key": "userType",
+											"value": "Pet Owner",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/auth/register",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "97"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"61-naBadHHDqdNZoIoJ4qVlDGC31Lw\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Feb 2025 11:21:28 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 400,\n    \"message\": \"User already registered with this mobile number\",\n    \"data\": [],\n    \"error\": true\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Pets",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/pets",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"pets"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "list",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:5000/api/pets",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"pets"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "535"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"217-BjKzCpuwDs3jsq9ct0tDybi2t2U\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Feb 2025 10:36:02 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Pet list fetched successfully\",\n    \"data\": [\n        {\n            \"_id\": \"67b701cf560e17760845a6ce\",\n            \"name\": \"Dogs\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6cf\",\n            \"name\": \"Cats\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d0\",\n            \"name\": \"Rabbits\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d1\",\n            \"name\": \"Birds\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d2\",\n            \"name\": \"Reptiles\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d3\",\n            \"name\": \"Fish\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d4\",\n            \"name\": \"Primates\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d5\",\n            \"name\": \"Horses\"\n        },\n        {\n            \"_id\": \"67b701cf560e17760845a6d6\",\n            \"name\": \"Other\"\n        }\n    ],\n    \"error\": false\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Breeds",
+			"item": [
+				{
+					"name": "list",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"pet_id\": \"67b750f03913ab15a2e198691\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/breeds",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"breeds"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "list",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"pet_id\": \"67b701cf560e17760845a6ce\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/breeds",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"breeds"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "265"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"109-VIKAcDF9NxrunYgj199HK9Nq7LA\""
+								},
+								{
+									"key": "Date",
+									"value": "Thu, 20 Feb 2025 10:47:03 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"Breed list fetched successfully\",\n    \"data\": [\n        {\n            \"_id\": \"67b701d0560e17760845a6da\",\n            \"name\": \"Labrador Retriever\"\n        },\n        {\n            \"_id\": \"67b701d0560e17760845a6db\",\n            \"name\": \"German Shepherd\"\n        },\n        {\n            \"_id\": \"67b701d0560e17760845a6dc\",\n            \"name\": \"Golden Retriever\"\n        }\n    ],\n    \"error\": false\n}"
+						}
+					]
 				}
 			]
 		}
