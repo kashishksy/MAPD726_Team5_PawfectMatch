@@ -94,15 +94,15 @@ const LoginScreen = ({ navigation }:any) => {
     <SafeAreaView style={styles.container}>
       {showOTP && (
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
-          <View style={styles.overlay}>
-            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-              <View style={styles.otpOverlay}>
-                <OTPInput onSubmit={handleOTPSubmit} />
-              </View>
-            </TouchableWithoutFeedback>
-          </View>
-        </TouchableWithoutFeedback>
-      )}
+        <View style={styles.overlay}>
+          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+            <View style={styles.otpOverlay}>
+              <OTPInput onSubmit={handleOTPSubmit} />
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+  </TouchableWithoutFeedback>
+)}
 
       <View style={styles.logoContainer}>
         <Image
@@ -111,7 +111,7 @@ const LoginScreen = ({ navigation }:any) => {
         />
       </View>
 
-      <View style={[styles.content, showOTP && styles.blurredContent]}>
+      <View style={[styles.content]}>
         <Text style={styles.title}>Find Your Pawfect Match Today!</Text>
         <Text style={styles.subtitle}>A world of furry possibilities awaits you.</Text>
 
@@ -201,7 +201,8 @@ const LoginScreen = ({ navigation }:any) => {
           <Text style={styles.socialButtonText}>Continue with Apple</Text>
         </TouchableOpacity>
 
-        {showOTP && <BlurView style={StyleSheet.absoluteFill} blurAmount={5} />}
+          {/* removing blurview for bug fix */}
+        {/* {showOTP && <BlurView style={StyleSheet.absoluteFill} blurAmount={5} />} */}
       </View>
     </SafeAreaView>
   );
@@ -406,7 +407,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.3)",
+    backgroundColor: "rgba(0,0,0,0.5)",
     zIndex: 2,
     justifyContent: "center",
     alignItems: "center",

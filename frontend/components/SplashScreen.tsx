@@ -9,7 +9,7 @@ const SplashScreen = ({ navigation }:any) => {
     // Fade in the text over 2 seconds
     Animated.timing(fadeAnim, {
       toValue: 1, // Final opacity: 1
-      duration: 2000, // 2 seconds
+      duration: 3000, // 3 seconds
       useNativeDriver: true, // Enable native driver for better performance
     }).start();
 
