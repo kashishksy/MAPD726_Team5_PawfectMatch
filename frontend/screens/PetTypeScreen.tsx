@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
@@ -31,7 +32,9 @@ const PetTypeScreen = ({ navigation }:any) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
+          <Image source={require('../assets/images/back_icon.png')}
+                style={styles.inputIcon}
+          />
         </TouchableOpacity>
         <ProgressBar currentStep={2} totalSteps={4} />
       </View>
@@ -97,6 +100,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 16,
     color: '#333',
+  },
+  inputIcon: {
+    marginRight: 12,
+    height: 20,
+    width: 20
   },
   subtitle: {
     fontSize: 16,

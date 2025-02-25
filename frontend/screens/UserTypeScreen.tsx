@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View,
   Text,
+  Image,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
@@ -19,7 +20,10 @@ const UserTypeScreen = ({ navigation }:any) => {
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <MaterialIcons name="arrow-back" size={24} color="#333" />
+          <Image source={require('../assets/images/back_icon.png')}
+             style={styles.inputIcon}
+          />
+                     
         </TouchableOpacity>
         <ProgressBar currentStep={1} totalSteps={4} />
       </View>
@@ -94,6 +98,11 @@ const styles = StyleSheet.create({
   content: {
     padding: 24,
     flex: 1,
+  },
+  inputIcon: {
+    marginRight: 12,
+    height: 20,
+    width: 20
   },
   title: {
     fontSize: 24,
