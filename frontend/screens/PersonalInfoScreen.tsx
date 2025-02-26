@@ -18,6 +18,7 @@ const PersonalInfoScreen = ({ navigation }: any) => {
 
   const handleSubmit = () => {
     console.log({ name, phone, gender, profilePic });
+    navigation.navigate('Dashboard');
   };
 
   return (
