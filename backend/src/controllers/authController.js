@@ -21,7 +21,6 @@ const upload = multer({ storage }).single('profileImage');
 
 exports.sendOTP = async (req, res) => {
     const { countryCode, mobileNumber } = req.body;
-
     // Validation
     if (!countryCode || !mobileNumber) {
         return res.status(400).json(errorResponse('Country code and mobile number are required'));
@@ -50,7 +49,7 @@ exports.sendOTP = async (req, res) => {
             from: process.env.TWILIO_PHONE,
             to: formattedNumber
         });
-
+        
         return res.status(200).json(successResponse('OTP sent successfully'));
 
     } catch (err) {
@@ -84,7 +83,6 @@ exports.verifyOTP = async (req, res) => {
         return res.status(500).json(errorResponse('Failed to verify OTP', 500));
     }
 };
-
 
 exports.registerUser = async (req, res) => {
     upload(req, res, async (err) => {
@@ -158,6 +156,53 @@ exports.registerUser = async (req, res) => {
             return res.status(500).json(errorResponse('Failed to register user'));
         }
     });
+};
+
+exports.checkUser = async (req, res) => {
+    const { countryCode, mobileNumber } = req.body;
+
+    try {
+        const user = await User.findOne({ countryCode, mobileNumber });
+        
+        if (user) {
+            // Generate new JWT token for the user
+            const token = jwt.sign(
+                { userId: user._id, userType: user.userType }, 
+                process.env.JWT_SECRET, 
+                { expiresIn: '7d' }
+            );
+
+            return res.status(200).json({
+                status: 200,
+                message: "User found",
+                exists: true,
+                data: {
+                    userId: user._id,
+                    user_type: user.userType === 'Pet Owner' ? 1 : 2,
+                    first_name: user.fullName.split(' ')[0] || '',
+                    last_name: user.fullName.split(' ')[1] || '',
+                    mobile_no: user.mobileNumber,
+                    main_role: user.userType === 'Pet Owner' ? 1 : 2,
+                    isActive: true,
+                    phone_code: user.countryCode,
+                    token: token,
+                    profile_pic_url: user.profileImage
+                },
+                error: false
+            });
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "User not found",
+            exists: false,
+            error: false
+        });
+
+    } catch (err) {
+        console.error("Error checking user:", err);
+        return res.status(500).json(errorResponse('Failed to check user'));
+    }
 };
 
 
