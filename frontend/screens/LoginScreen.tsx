@@ -16,6 +16,18 @@ import { SpinnerSimpleUsageShowcase } from "../components/LoadingSpinner";
 import OTPInput from "../components/OTPInput";
 import { BlurView } from "@react-native-community/blur";
 import { Svg, Path } from 'react-native-svg';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setPhoneNumber,
+  setLoading,
+  setError,
+  setOtpSent,
+  setOtpVerified,
+  setIsNewUser,
+  setLoggedIn
+} from '../redux/slices/authSlice';
+import api from '../services/api';
+import axios from "axios";
 
 interface CheckmarkProps {
   color: string; // Define the type of the 'color' prop as a string
@@ -33,13 +45,13 @@ const Checkmark: React.FC<CheckmarkProps> = ({ color }) => (
 const { width, height } = Dimensions.get("window"); // Get screen dimensions
 
 const LoginScreen = ({ navigation }:any) => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const dispatch = useDispatch();
+  const { isLoading, error, otpSent } = useSelector((state: any) => state.auth);
+  const [phoneNumber, setLocalPhoneNumber] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
 
   const handleContinue = async () => {
-    // Basic phone number validation (10 digits)
     const phoneRegex = /^\d{10}$/;
 
     if (!phoneRegex.test(phoneNumber)) {
@@ -52,35 +64,87 @@ const LoginScreen = ({ navigation }:any) => {
       return;
     }
 
-    // Show loading spinner
-    setIsLoading(true);
+    dispatch(setLoading(true));   
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000)); // Simulate API call
+      console.log('Attempting to send OTP to:', phoneNumber);
+      const response = await api.post('/auth/send-otp', {
+        countryCode: '1',
+        mobileNumber: phoneNumber,
+      });
+
+      console.log('OTP send response:', response.data);
+
+      if (response.data.error) {
+        throw new Error(response.data.message);
+      }
+
+      dispatch(setOtpSent(true));
       setShowOTP(true);
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Error", "Something went wrong. Please try again.");
+    } catch (error: any) {
+      console.error('OTP send error:', error);
+      const errorMessage = error.response?.data?.message || error.message || "Failed to send OTP";
+      dispatch(setError(errorMessage));
+      Alert.alert("Error", errorMessage);
     } finally {
-      setIsLoading(false);
+      dispatch(setLoading(false));
     }
   };
 
   const handlePhoneNumberChange = (text:string) => {
     const cleanNumber = text.replace(/[^0-9]/g, '');
     const limitedNumber = cleanNumber.slice(0, 10);
-    setPhoneNumber(limitedNumber);
+    setLocalPhoneNumber(limitedNumber);
   };
 
   const handleOTPSubmit = async (otp: string) => {
+    dispatch(setLoading(true));
+
     try {
-      // Simulate API verification
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      // After successful verification, navigate to UserType screen
-      navigation.navigate('UserType');
-    } catch (error) {
-      console.error("OTP verification failed:", error);
-      Alert.alert("Error", "OTP verification failed. Please try again.");
+      // First verify the OTP
+      const verifyResponse = await api.post('/auth/verify-otp', {
+        countryCode: '1',
+        mobileNumber: phoneNumber,
+        otp,
+      });
+
+      if (verifyResponse.data.error) {
+        throw new Error(verifyResponse.data.message);
+      }
+
+      // After OTP verification, check if user exists
+      const userResponse = await api.post('/auth/check-user', {
+        countryCode: '1',
+        mobileNumber: phoneNumber,
+      });
+
+      if (userResponse.data.error) {
+        throw new Error(userResponse.data.message);
+      }
+
+      // Store phone number in Redux
+      dispatch(setPhoneNumber(phoneNumber));
+      dispatch(setOtpVerified(true));
+
+      if (userResponse.data.exists) {
+        // User exists - store user data and navigate to Dashboard
+        dispatch(setLoggedIn(true));
+        // You might want to store user data in Redux here
+        // dispatch(setUserData(userResponse.data.user));
+        navigation.navigate('Dashboard');
+      } else {
+        // New user - continue with registration flow
+        dispatch(setIsNewUser(true));
+        navigation.navigate('PetType');
+      }
+
+    } catch (error: any) {
+      console.error('OTP verification error:', error);
+      const errorMessage = error.response?.data?.message || error.message || "OTP verification failed";
+      dispatch(setError(errorMessage));
+      Alert.alert("Error", errorMessage);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 

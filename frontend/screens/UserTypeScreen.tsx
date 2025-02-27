@@ -9,9 +9,19 @@ import {
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from '../components/ProgressBar';
+import { useDispatch } from 'react-redux';
+import { setUserType } from '../redux/slices/registrationSlice';
 
 const UserTypeScreen = ({ navigation }:any) => {
+  const dispatch = useDispatch();
   const [selectedType, setSelectedType] = useState<string | null>(null);
+
+  const handleContinue = () => {
+    if (selectedType) {
+      dispatch(setUserType(selectedType));
+      navigation.navigate('PetType');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -73,7 +83,7 @@ const UserTypeScreen = ({ navigation }:any) => {
           !selectedType && styles.continueButtonDisabled
         ]}
         disabled={!selectedType}
-        onPress={() => navigation.navigate('PetType')}
+        onPress={handleContinue}
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>

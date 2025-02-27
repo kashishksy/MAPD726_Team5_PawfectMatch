@@ -7,44 +7,74 @@ import {
   StyleSheet,
   SafeAreaView,
   FlatList,
+  Alert,
 } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedBreeds } from '../redux/slices/registrationSlice';
+import { setLoggedIn } from '../redux/slices/authSlice';
 import ProgressBar from '../components/ProgressBar';
+import api from '../services/api';
 
-const breedsByType = {
-  dogs: ['Labrador', 'Golden Retriever', 'German Shepherd', 'Bulldog', 'Poodle', 'Beagle', 'Mixed Breed'],
-  cats: ['Domestic Shorthair', 'Maine Coon', 'Persian', 'Siamese', 'Ragdoll', 'Bengal', 'Mixed Breed'],
-  rabbits: ['Holland Lop', 'Dutch', 'Mini Rex', 'Lionhead', 'Flemish Giant', 'Jersey Wooly'],
-  birds: ['Parakeet', 'Cockatiel', 'Canary', 'Finch', 'Lovebird', 'Conure', 'Macaw'],
-  reptiles: ['Bearded Dragon', 'Gecko', 'Ball Python', 'Corn Snake', 'Turtle', 'Iguana'],
-  fish: ['Betta', 'Goldfish', 'Guppy', 'Tetra', 'Angelfish', 'Molly', 'Platy'],
-  primates: ['Capuchin', 'Marmoset', 'Tamarin', 'Squirrel Monkey', 'Lemur'],
-  horses: ['Quarter Horse', 'Arabian', 'Thoroughbred', 'Morgan', 'Appaloosa', 'Mustang'],
-  other: ['Hamster', 'Guinea Pig', 'Ferret', 'Hedgehog', 'Chinchilla', 'Sugar Glider'],
-};
+interface Breed {
+  _id: string;
+  name: string;
+}
 
-const BreedTypeScreen = ({ navigation, route }: any) => {
-  const [selectedBreeds, setSelectedBreeds] = useState<string[]>([]);
-  const [breeds, setBreeds] = useState<string[]>([]);
 
-  const petTypes = route.params?.petTypes || 'dogs';
+const BreedTypeScreen = ({ navigation }: any) => {
+  const dispatch = useDispatch();
+  const [selectedBreeds, setLocalSelectedBreeds] = useState<Breed[]>([]);
+  const [breeds, setBreeds] = useState<Breed[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { petType } = useSelector((state: any) => state.registration);
+  const { phoneNumber, countryCode } = useSelector((state: any) => state.auth);
 
+  // Fetch breeds for the selected pet type
   useEffect(() => {
-    setBreeds(breedsByType[petTypes as keyof typeof breedsByType] || []);
-  }, [petTypes]);
+    const fetchBreeds = async () => {
+      setIsLoading(true);
+      try {
+        console.log('Fetching breeds for pet:', petType);
+        const response = await api.post('/breeds', {
+          pet_id: petType
+        });
 
-  const toggleBreedSelection = (breed: string) => {
-    if (selectedBreeds.includes(breed)) {
-      setSelectedBreeds(selectedBreeds.filter((b) => b !== breed));
+        if (response.status !== 200) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = response.data;
+        console.log('Breeds received:', data);
+        setBreeds(data.data || []);
+      } catch (error) {
+        console.error('Error fetching breeds:', error);
+        Alert.alert('Error', 'Failed to fetch breeds. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (petType) {
+      fetchBreeds();
+    }
+  }, [petType]);
+
+  const toggleBreedSelection = (breed: Breed) => {
+    if (selectedBreeds.find(b => b._id === breed._id)) {
+      setLocalSelectedBreeds(selectedBreeds.filter(b => b._id !== breed._id));
     } else {
-      setSelectedBreeds([...selectedBreeds, breed]);
+      setLocalSelectedBreeds([...selectedBreeds, breed]);
     }
   };
 
   const handleContinue = () => {
-    navigation.navigate('PersonalInfo', { 
-      petTypes, 
-      selectedBreeds 
-    });
+    if (selectedBreeds.length > 0) {
+      // Store selected breeds in Redux
+      dispatch(setSelectedBreeds(selectedBreeds));
+      // Navigate to PersonalInfo screen
+      navigation.navigate('PersonalInfo');
+    }
   };
 
   return (
@@ -66,22 +96,34 @@ const BreedTypeScreen = ({ navigation, route }: any) => {
           You can select multiple options.
         </Text>
 
-        <FlatList
-          data={breeds}
-          keyExtractor={(item) => item}
-          contentContainerStyle={styles.breedList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={[
-                styles.breedItem,
-                selectedBreeds.includes(item) && styles.selectedBreedItem,
-              ]}
-              onPress={() => toggleBreedSelection(item)}
-            >
-              <Text style={styles.breedText}>{item}</Text>
-            </TouchableOpacity>
-          )}
-        />
+        {isLoading ? (
+          <View style={styles.loadingContainer}>
+            <Text>Loading breeds...</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={breeds}
+            keyExtractor={(item) => item._id}
+            contentContainerStyle={styles.breedList}
+            ListEmptyComponent={() => (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No breeds available</Text>
+              </View>
+            )}
+            renderItem={({ item: breed }) => (
+              <TouchableOpacity
+                key={breed._id}
+                style={[
+                  styles.breedItem,
+                  selectedBreeds.find(b => b._id === breed._id) && styles.selectedBreedItem,
+                ]}
+                onPress={() => toggleBreedSelection(breed)}
+              >
+                <Text style={styles.breedText}>{breed.name}</Text>
+              </TouchableOpacity>
+            )}
+          />
+        )}
       </View>
 
       <TouchableOpacity 
@@ -165,6 +207,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#666',
   },
 });
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,23 +7,42 @@ import {
   StyleSheet,
   SafeAreaView,
 } from 'react-native';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import ProgressBar from '../components/ProgressBar';
-
-const petTypes = [
-  { id: 'dogs', name: 'Dogs', emoji: '🐕' },
-  { id: 'cats', name: 'Cats', emoji: '🐈' },
-  { id: 'rabbits', name: 'Rabbits', emoji: '🐰' },
-  { id: 'birds', name: 'Birds', emoji: '🦜' },
-  { id: 'reptiles', name: 'Reptiles', emoji: '🦎' },
-  { id: 'fish', name: 'Fish', emoji: '🐠' },
-  { id: 'primates', name: 'Primates', emoji: '🐒' },
-  { id: 'horses', name: 'Horses', emoji: '🐎' },
-  { id: 'other', name: 'Other', emoji: '🐾' },
-];
+import { useDispatch } from 'react-redux';
+import { setPetType } from '../redux/slices/registrationSlice';
+import api from '../services/api';
 
 const PetTypeScreen = ({ navigation }:any) => {
+  const dispatch = useDispatch();
   const [selectedType, setSelectedType] = useState<string | null>(null);
+  const [petTypes, setPetTypes] = useState<Array<{_id: string, name: string, emoji: string}>>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPetTypes = async () => {
+      try {
+        console.log('Fetching pet types...');
+        const response = await api.get('/pets');
+        const data = response.data;
+        console.log('Pet types received:', data.data);
+        setPetTypes(data.data);
+      } catch (error) {
+        console.error('Error fetching pet types:', error);
+        setPetTypes([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPetTypes();
+  }, []);
+
+  const handleContinue = () => {
+    if (selectedType) {
+      dispatch(setPetType(selectedType));
+      navigation.navigate('BreedType', { petTypes: selectedType });
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,19 +66,23 @@ const PetTypeScreen = ({ navigation }:any) => {
         </Text>
 
         <View style={styles.grid}>
-          {petTypes.map((pet) => (
-            <TouchableOpacity
-              key={pet.id}
-              style={[
-                styles.petOption,
-                selectedType === pet.id && styles.selectedPetOption
-              ]}
-              onPress={() => setSelectedType(pet.id)}
-            >
-              <Text style={styles.emoji}>{pet.emoji}</Text>
-              <Text style={styles.petName}>{pet.name}</Text>
-            </TouchableOpacity>
-          ))}
+          {isLoading ? (
+            <Text>Loading pet types...</Text>
+          ) : (
+            petTypes.map((pet) => (
+              <TouchableOpacity
+                key={pet._id}
+                style={[
+                  styles.petOption,
+                  selectedType === pet._id && styles.selectedPetOption
+                ]}
+                onPress={() => setSelectedType(pet._id)}
+              >
+                <Text style={styles.emoji}>{pet.emoji}</Text>
+                <Text style={styles.petName}>{pet.name}</Text>
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </View>
 
@@ -69,7 +92,7 @@ const PetTypeScreen = ({ navigation }:any) => {
           !selectedType && styles.continueButtonDisabled
         ]}
         disabled={!selectedType}
-        onPress={() => navigation.navigate('BreedType', { petTypes: selectedType })}
+        onPress={handleContinue}
       >
         <Text style={styles.continueButtonText}>Continue</Text>
       </TouchableOpacity>

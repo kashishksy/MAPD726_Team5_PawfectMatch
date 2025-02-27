@@ -11,10 +11,12 @@ import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import DevScreenSelector from '../screens/DevScreenSelector';
 
+
+
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isDevelopment = __DEV__;
+  const isDevelopment = !__DEV__;
   
   return (
     <NavigationContainer>
