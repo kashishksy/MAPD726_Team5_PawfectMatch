@@ -1,13 +1,9 @@
 import axios from 'axios';
 import { Platform } from 'react-native';
 
-// You can find it using 'ipconfig' on Windows or 'ifconfig' on Mac/Linux
-const LOCAL_IP = '192.168.2.36'; // Replace X with your actual IP
 
 const api = axios.create({
-  baseURL: Platform.OS === 'android'
-    ? `http://${LOCAL_IP}:3000/api`  // For physical Android device
-    : 'http://localhost:3000/api',    // For iOS simulator
+  baseURL: 'https://mapd726-team5-pawfectmatch.onrender.com/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
