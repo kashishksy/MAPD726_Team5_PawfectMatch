@@ -163,7 +163,7 @@ exports.registerUser = async (req, res) => {
         const token = jwt.sign(
             { userId: newUser._id, mobileNumber: newUser.mobileNumber },
             PRIVATE_KEY,
-            { algorithm: 'RS256', expiresIn: '7d' }
+            { algorithm: 'RS256', expiresIn: '1d' }
         );
         console.log("token generated successfully")
         // Construct response data
@@ -208,6 +208,7 @@ exports.checkUser = async (req, res) => {
                 process.env.JWT_SECRET, 
                 { expiresIn: '1d' }
             );
+            console.log("token generated successfully",token)
 
             return res.status(200).json({
                 status: 200,
