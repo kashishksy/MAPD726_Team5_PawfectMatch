@@ -21,7 +21,7 @@ const AdoptionBanner = () => {
 const styles = StyleSheet.create({
   banner: {
     flexDirection: 'row',
-    backgroundColor: '#F4A460',
+    backgroundColor: '#FF6F61',
     borderRadius: 12,
     margin: 16,
     padding: 24,

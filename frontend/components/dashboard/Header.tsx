@@ -8,7 +8,7 @@ const Header = () => {
     <View style={styles.header}>
       <View style={styles.leftContainer}>
         <Image 
-          source={require('../../assets/images/logo.png')}
+          source={require('../../assets/images/shiba_inu.png')}
           style={styles.logo}
         />
       </View>
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   logo: {
-    width: 24,
-    height: 24,
+    width: 34,
+    height: 34,
     resizeMode: 'contain',
   },
   leftContainer: {
