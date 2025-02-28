@@ -124,96 +124,75 @@ exports.verifyOTP = async (req, res) => {
 };
 
 exports.registerUser = async (req, res) => {
-    upload(req, res, async (err) => {
-        let uploadedFilePath = req.file ? path.join(__dirname, '../uploads/', req.file.filename) : null;
-
-        if (err) {
-            let errorMessage = 'Profile image upload failed';
-
-            if (err.message.includes('Only JPG, JPEG, and PNG files are allowed!')) {
-                errorMessage = 'Invalid file format. Only JPG, JPEG, and PNG are allowed.';
-            } else if (err.message.includes('File too large')) {
-                errorMessage = 'File size exceeds the limit (2MB).';
-            }
-
-            return res.status(400).json(errorResponse(errorMessage));
-        }
-
-        const { fullName, countryCode, mobileNumber, gender, pet_ids, breed_ids, userType } = req.body;
+    try {
+        const { fullName, countryCode, mobileNumber, gender, pet_ids, breed_ids, userType, profileImage } = req.body;
 
         // Validation for required fields
-        const requiredFields = { fullName, countryCode, mobileNumber, gender, userType };
+        const requiredFields = { fullName, countryCode, mobileNumber, gender, userType, profileImage,pet_ids,breed_ids };
         const missingFields = Object.keys(requiredFields).filter(field => !requiredFields[field]);
 
         if (missingFields.length > 0) {
-            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
             return res.status(400).json(errorResponse(`${missingFields[0]} field is required`));
         }
 
         if (!['Pet Owner', 'Pet Adopter'].includes(userType)) {
-            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
             return res.status(400).json(errorResponse('Invalid user type'));
         }
 
-        try {
-            // Check if user already exists
-            let existingUser = await User.findOne({ mobileNumber });
+        // Check if user already exists
+        let existingUser = await User.findOne({ mobileNumber });
 
-            if (existingUser) {
-                if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
-                return res.status(400).json(errorResponse('User already registered with this mobile number'));
-            }
-
-            const hostUrl = `${req.protocol}://${req.get('host')}`;
-
-            const newUser = new User({
-                fullName,
-                countryCode,
-                mobileNumber,
-                gender,
-                profileImage: uploadedFilePath ? `${hostUrl}/uploads/${req.file.filename}` : null,
-                pet_ids: pet_ids ? JSON.parse(pet_ids) : [],
-                breed_ids: breed_ids ? JSON.parse(breed_ids) : [],
-                userType
-            });
-
-            await newUser.save();
-
-            const token = jwt.sign(
-                { userId: user._id, mobileNumber: user.mobileNumber },
-                PRIVATE_KEY,
-                { algorithm: 'RS256', expiresIn: '7d' }
-            );
-
-            // Construct response data
-            const responseData = {
-                userId: newUser._id,
-                fullName: newUser.fullName,
-                phone_code: newUser.countryCode,
-                mobile_no: newUser.mobileNumber,
-                gender: newUser.gender,
-                profile_pic_url: newUser.profileImage,
-                pet_ids: newUser.pet_ids,
-                breed_ids: newUser.breed_ids,
-                user_type: newUser.userType,
-                token: token,
-                createdAt: newUser.createdAt,
-                updatedAt: newUser.updatedAt
-            };
-
-            res.status(200).json({
-                status: 200,
-                message: "Register successfully !!",
-                data: responseData,
-                error: false
-            });
-
-        } catch (err) {
-            console.error("Error registering user:", err);
-            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
-            return res.status(500).json(errorResponse('Failed to register user'));
+        if (existingUser) {
+            return res.status(400).json(errorResponse('User already registered with this mobile number'));
         }
-    });
+
+        const newUser = new User({
+            fullName,
+            countryCode,
+            mobileNumber,
+            gender,
+            profileImage, // Store the avatar URL directly
+            pet_ids: pet_ids ? JSON.parse(pet_ids) : [],
+            breed_ids: breed_ids ? JSON.parse(breed_ids) : [],
+            userType
+        });
+
+        await newUser.save();
+        console.log("user saved successfully in database")
+
+        const token = jwt.sign(
+            { userId: newUser._id, mobileNumber: newUser.mobileNumber },
+            PRIVATE_KEY,
+            { algorithm: 'RS256', expiresIn: '7d' }
+        );
+        console.log("token generated successfully")
+        // Construct response data
+        const responseData = {
+            userId: newUser._id,
+            fullName: newUser.fullName,
+            phone_code: newUser.countryCode,
+            mobile_no: newUser.mobileNumber,
+            gender: newUser.gender,
+            profile_pic_url: newUser.profileImage,
+            pet_ids: newUser.pet_ids,
+            breed_ids: newUser.breed_ids,
+            user_type: newUser.userType,
+            token: token,
+            createdAt: newUser.createdAt,
+            updatedAt: newUser.updatedAt
+        };
+        console.log("response data generated successfully")
+        res.status(200).json({
+            status: 200,
+            message: "Register successfully !!",
+            data: responseData,
+            error: false
+        });
+
+    } catch (err) {
+        console.error("Error registering user:", err);
+        return res.status(500).json(errorResponse('Failed to register user'));
+    }
 };
 
 exports.checkUser = async (req, res) => {
@@ -227,7 +206,7 @@ exports.checkUser = async (req, res) => {
             const token = jwt.sign(
                 { userId: user._id, userType: user.userType }, 
                 process.env.JWT_SECRET, 
-                { expiresIn: '7d' }
+                { expiresIn: '1d' }
             );
 
             return res.status(200).json({
