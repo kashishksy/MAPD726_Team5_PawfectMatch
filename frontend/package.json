@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@eva-design/eva": "^2.2.0",
+    "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-native-community/blur": "^4.4.1",
     "@react-native-vector-icons/evil-icons": "^1.10.1",
     "@react-native-vector-icons/fontawesome6": "^6.7.1",
@@ -29,6 +30,7 @@
     "react": "18.3.1",
     "react-native": "0.77.1",
     "react-native-animated-loader": "^1.0.0",
+    "react-native-app-intro-slider": "^4.0.4",
     "react-native-asset": "^2.1.1",
     "react-native-config": "^1.5.5",
     "react-native-safe-area-context": "^5.2.0",

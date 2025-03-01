@@ -4,10 +4,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './slices/authSlice'; // We'll create this next
 import registrationReducer from './slices/registrationSlice';
+import walkthroughReducer from './slices/walkthroughSlice';
 
-export const store = configureStore({
+const store = configureStore({
   reducer: {
-    auth: authReducer, // Add more slices here as needed
+    auth: authReducer,
+    walkthrough: walkthroughReducer, // Add more slices here as needed
     registration: registrationReducer,
   },
 });
+
+export default store;
