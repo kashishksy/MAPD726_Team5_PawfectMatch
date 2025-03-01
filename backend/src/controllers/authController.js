@@ -82,11 +82,6 @@ exports.sendOTP = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
     const { countryCode, mobileNumber, otp } = req.body;
 
-    // Validation
-    if (!countryCode || !mobileNumber || !otp) {
-        return res.status(400).json(errorResponse('Country code, mobile number, and OTP are required'));
-    }
-
     try {
         const otpRecord = await Authentication.findOne({ countryCode, mobileNumber, otp });
 
@@ -97,29 +92,30 @@ exports.verifyOTP = async (req, res) => {
         // Check if user exists
         const user = await User.findOne({ countryCode, mobileNumber });
 
-        let token = null;
-        let is_register = !!user; // If user exists, is_register = true; otherwise, false
-
-        // If the user exists, generate JWT token
-        if (user) {
-            token = jwt.sign(
-                { userId: user._id, mobileNumber: user.mobileNumber },
-                PRIVATE_KEY,
-                { algorithm: 'RS256', expiresIn: '7d' }
-            );
-        }
+        // Generate token regardless of whether user exists or not
+        const token = jwt.sign(
+            { userId: user?._id, mobileNumber },
+            PRIVATE_KEY,
+            { algorithm: 'RS256', expiresIn: '1m' }
+        );
 
         // Delete the OTP record after successful verification
         await Authentication.deleteOne({ _id: otpRecord._id });
 
-        return res.status(200).json(successResponse('OTP verified successfully', {
-            is_register,
-            token
-        }));
+        return res.status(200).json({
+            status: 200,
+            message: 'OTP verified successfully',
+            data: {
+                exists: !!user,
+                token,
+                user: user
+            },
+            error: false
+        });
 
     } catch (err) {
         console.error("Error verifying OTP:", err);
-        return res.status(500).json(errorResponse('Failed to verify OTP', 500));
+        return res.status(500).json(errorResponse('Failed to verify OTP'));
     }
 };
 
@@ -163,7 +159,7 @@ exports.registerUser = async (req, res) => {
         const token = jwt.sign(
             { userId: newUser._id, mobileNumber: newUser.mobileNumber },
             PRIVATE_KEY,
-            { algorithm: 'RS256', expiresIn: '1d' }
+            { algorithm: 'RS256', expiresIn: '12h' }
         );
         console.log("token generated successfully")
         // Construct response data
@@ -202,29 +198,26 @@ exports.checkUser = async (req, res) => {
         const user = await User.findOne({ countryCode, mobileNumber });
         
         if (user) {
-            // Generate new JWT token for the user
             const token = jwt.sign(
-                { userId: user._id, userType: user.userType }, 
-                process.env.JWT_SECRET, 
-                { expiresIn: '1d' }
+                { userId: user._id, mobileNumber },
+                PRIVATE_KEY,
+                { algorithm: 'RS256', expiresIn: '12h' }
             );
-            console.log("token generated successfully",token)
 
             return res.status(200).json({
                 status: 200,
                 message: "User found",
-                exists: true,
                 data: {
-                    userId: user._id,
-                    user_type: user.userType === 'Pet Owner' ? 1 : 2,
-                    first_name: user.fullName.split(' ')[0] || '',
-                    last_name: user.fullName.split(' ')[1] || '',
-                    mobile_no: user.mobileNumber,
-                    main_role: user.userType === 'Pet Owner' ? 1 : 2,
-                    isActive: true,
-                    phone_code: user.countryCode,
-                    token: token,
-                    profile_pic_url: user.profileImage
+                    exists: true,
+                    token,
+                    user: {
+                        userId: user._id,
+                        userType: user.userType,
+                        fullName: user.fullName,
+                        mobileNumber: user.mobileNumber,
+                        countryCode: user.countryCode,
+                        profileImage: user.profileImage
+                    }
                 },
                 error: false
             });
@@ -233,7 +226,7 @@ exports.checkUser = async (req, res) => {
         return res.status(200).json({
             status: 200,
             message: "User not found",
-            exists: false,
+            data: { exists: false },
             error: false
         });
 
