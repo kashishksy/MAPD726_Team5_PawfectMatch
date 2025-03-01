@@ -17,6 +17,7 @@ import OTPInput from "../components/OTPInput";
 import { BlurView } from "@react-native-community/blur";
 import { Svg, Path } from 'react-native-svg';
 import { useDispatch, useSelector } from 'react-redux';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   setPhoneNumber,
   setLoading,
@@ -181,6 +182,18 @@ const LoginScreen = ({ navigation }:any) => {
 
         {/* Phone Number Input */}
         <View style={styles.inputGroup}>
+          
+           {/* Uncomment this to test walkthrough screen */}
+        {/* <TouchableOpacity
+            onPress={async () => {
+              await AsyncStorage.removeItem("walkthroughSeen");
+              Alert.alert("Walkthrough reset! Restart the app.");
+            }}
+            style={{ padding: 10, backgroundColor: "red", marginTop: 20 }}
+          >
+            <Text style={{ color: "white", textAlign: "center" }}>Reset Walkthrough</Text>
+          </TouchableOpacity> */}
+
           <Text style={styles.label}>Phone Number</Text>
           <View style={styles.phoneInputContainer}>
             <TouchableOpacity style={styles.countryCodeButton}>
