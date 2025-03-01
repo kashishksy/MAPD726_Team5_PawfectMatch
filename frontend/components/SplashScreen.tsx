@@ -1,26 +1,34 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
+import { useSelector } from 'react-redux';
 
 const SplashScreen = ({ navigation }:any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity: 0
+  const hasSeenWalkthrough = useSelector((state: any) => state.walkthrough.hasSeenWalkthrough);
 
   useEffect(() => {
-    // Fade in the text over 2 seconds
+    // Fade in the text over 3 seconds
     Animated.timing(fadeAnim, {
       toValue: 1, // Final opacity: 1
       duration: 3000, // 3 seconds
       useNativeDriver: true, // Enable native driver for better performance
     }).start();
 
-    // Navigate to Login screen after 3 seconds
+    // Navigate to appropriate screen after 3 seconds
     const timer = setTimeout(() => {
-      navigation.replace('Login');
+      if (hasSeenWalkthrough) {
+        // User has seen walkthrough, go directly to Login
+        navigation.replace('Login');
+      } else {
+        // New user, go to Walkthrough
+        navigation.replace('Walkthrough');
+      }
     }, 3000);
 
     // Cleanup timer on component unmount
     return () => clearTimeout(timer);
-  }, [fadeAnim, navigation]);
+  }, [fadeAnim, navigation, hasSeenWalkthrough]);
 
   return (
     <View style={styles.container}>
