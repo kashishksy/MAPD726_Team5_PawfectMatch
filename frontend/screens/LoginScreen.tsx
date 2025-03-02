@@ -25,10 +25,12 @@ import {
   setOtpSent,
   setOtpVerified,
   setIsNewUser,
-  setLoggedIn
+  setLoggedIn,
+  setUserData
 } from '../redux/slices/authSlice';
 import api from '../services/api';
 import axios from "axios";
+import { storeToken } from '../utils/authStorage';
 
 interface CheckmarkProps {
   color: string; // Define the type of the 'color' prop as a string
@@ -102,7 +104,6 @@ const LoginScreen = ({ navigation }:any) => {
     dispatch(setLoading(true));
 
     try {
-      // First verify the OTP
       const verifyResponse = await api.post('/auth/verify-otp', {
         countryCode: '1',
         mobileNumber: phoneNumber,
@@ -113,30 +114,22 @@ const LoginScreen = ({ navigation }:any) => {
         throw new Error(verifyResponse.data.message);
       }
 
-      // After OTP verification, check if user exists
-      const userResponse = await api.post('/auth/check-user', {
-        countryCode: '1',
-        mobileNumber: phoneNumber,
-      });
+      const { token, exists, user } = verifyResponse.data.data;
+      
+      // Store token using the auth storage utility
+      await storeToken(token);
 
-      if (userResponse.data.error) {
-        throw new Error(userResponse.data.message);
-      }
-
-      // Store phone number in Redux
+      // Update Redux state
       dispatch(setPhoneNumber(phoneNumber));
       dispatch(setOtpVerified(true));
 
-      if (userResponse.data.exists) {
-        // User exists - store user data and navigate to Dashboard
+      if (exists) {
+        dispatch(setUserData(user));
         dispatch(setLoggedIn(true));
-        // You might want to store user data in Redux here
-        // dispatch(setUserData(userResponse.data.user));
-        navigation.navigate('Dashboard');
+        navigation.replace('Dashboard');
       } else {
-        // New user - continue with registration flow
         dispatch(setIsNewUser(true));
-        navigation.navigate('PetType');
+        navigation.navigate('UserType');
       }
 
     } catch (error: any) {

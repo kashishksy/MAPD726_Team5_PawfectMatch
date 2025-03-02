@@ -20,7 +20,7 @@ import DevScreenSelector from "../screens/DevScreenSelector";
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isDevelopment = !__DEV__;
+  const isDevelopment = __DEV__;
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const hasSeenWalkthrough = useSelector((state: { walkthrough: { hasSeenWalkthrough: boolean } }) => state.walkthrough.hasSeenWalkthrough);

@@ -1,13 +1,46 @@
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
 import LottieView from 'lottie-react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import api from '../services/api';
+import { getToken } from '../utils/authStorage';
+import { setLoggedIn, setUserData } from '../redux/slices/authSlice';
 
 const SplashScreen = ({ navigation }:any) => {
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity: 0
+  const dispatch = useDispatch();
   const hasSeenWalkthrough = useSelector((state: any) => state.walkthrough.hasSeenWalkthrough);
 
   useEffect(() => {
+    const checkAuthStatus = async () => {
+      try {
+        // First check if we have a token
+        const token = await getToken();
+        
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        // Verify token by calling profile endpoint
+        const response = await api.get('/auth/profile');
+        
+        // If successful, update Redux with user data
+        dispatch(setUserData(response.data.data));
+        dispatch(setLoggedIn(true));
+        
+        // Navigate to Dashboard
+        navigation.replace('Dashboard');
+      } catch (error) {
+        console.log('Auth check failed:', error);
+        // Token is invalid or expired
+        if (hasSeenWalkthrough) {
+          navigation.replace('Login');
+        } else {
+          navigation.replace('Walkthrough');
+        }
+      }
+    };
+
     // Fade in the text over 3 seconds
     Animated.timing(fadeAnim, {
       toValue: 1, // Final opacity: 1
@@ -15,20 +48,14 @@ const SplashScreen = ({ navigation }:any) => {
       useNativeDriver: true, // Enable native driver for better performance
     }).start();
 
-    // Navigate to appropriate screen after 3 seconds
+    // Check auth status after animation
     const timer = setTimeout(() => {
-      if (hasSeenWalkthrough) {
-        // User has seen walkthrough, go directly to Login
-        navigation.replace('Login');
-      } else {
-        // New user, go to Walkthrough
-        navigation.replace('Walkthrough');
-      }
+      checkAuthStatus();
     }, 3000);
 
     // Cleanup timer on component unmount
     return () => clearTimeout(timer);
-  }, [fadeAnim, navigation, hasSeenWalkthrough]);
+  }, [fadeAnim, navigation, hasSeenWalkthrough, dispatch]);
 
   return (
     <View style={styles.container}>

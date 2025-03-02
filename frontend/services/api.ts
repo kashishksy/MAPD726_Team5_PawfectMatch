@@ -1,9 +1,17 @@
+// @ts-nocheck
+
 import axios from 'axios';
 import { Platform } from 'react-native';
+import { getToken } from '../utils/authStorage';
 
+// Add this before creating the axios instance
+const getAuthHeader = async () => {
+  const token = await getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 const api = axios.create({
-  baseURL: 'https://mapd726-team5-pawfectmatch.onrender.com/api',
+  baseURL: 'http://192.168.2.36:3000/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -12,7 +20,12 @@ const api = axios.create({
 
 // Add request interceptor for debugging
 api.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    const authHeader = await getAuthHeader();
+    config.headers = {
+      ...config.headers,
+      ...authHeader,
+    };
     console.log('Request:', {
       url: config.url,
       method: config.method,

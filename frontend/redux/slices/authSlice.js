@@ -10,6 +10,7 @@ const initialState = {
   isNewUser: false, // Add this to track if user is new
   otpSent: false, // Add this to track if OTP was sent
   otpVerified: false, // Add this to track if OTP was verified
+  userData: null, // Add this
 };
 
 const authSlice = createSlice({
@@ -40,6 +41,9 @@ const authSlice = createSlice({
     setOtpVerified: (state, action) => {
       state.otpVerified = action.payload;
     },
+    setUserData: (state, action) => {
+      state.userData = action.payload;
+    },
   },
 });
 
@@ -53,6 +57,7 @@ export const {
   setIsNewUser,
   setOtpSent,
   setOtpVerified,
+  setUserData,
 } = authSlice.actions;
 
 // Export reducer

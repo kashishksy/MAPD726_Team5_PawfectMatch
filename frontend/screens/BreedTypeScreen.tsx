@@ -120,6 +120,9 @@ const BreedTypeScreen = ({ navigation }: any) => {
                 onPress={() => toggleBreedSelection(breed)}
               >
                 <Text style={styles.breedText}>{breed.name}</Text>
+                {selectedBreeds.find(b => b._id === breed._id) && (
+                  <Text style={styles.checkmark}>✓</Text>
+                )}
               </TouchableOpacity>
             )}
           />
@@ -179,6 +182,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   breedItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 16,
     borderWidth: 1,
     borderColor: '#ddd',
@@ -220,6 +226,11 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     color: '#666',
+  },
+  checkmark: {
+    color: '#FF6F61',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 

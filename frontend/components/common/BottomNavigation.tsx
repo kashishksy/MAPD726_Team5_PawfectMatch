@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { removeToken } from '../../utils/authStorage';
+import { useNavigation } from '@react-navigation/native';
 
 const navigationItems = [
   {
@@ -37,6 +39,19 @@ const navigationItems = [
 
 const BottomNavigation = () => {
   const [activeTab, setActiveTab] = React.useState('home');
+  const navigation = useNavigation();
+
+  const handleTabPress = async (tabId: string) => {
+    if (tabId === 'account') {
+      await removeToken();
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' as never }],
+      });
+    } else {
+      setActiveTab(tabId);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -44,7 +59,7 @@ const BottomNavigation = () => {
         <TouchableOpacity
           key={item.id}
           style={styles.tabItem}
-          onPress={() => setActiveTab(item.id)}
+          onPress={() => handleTabPress(item.id)}
         >
           <Ionicons
             name={activeTab === item.id ? item.activeIcon : item.icon}
