@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View, ActivityIndicator } from 'react-native';
@@ -23,11 +23,12 @@ import TermsScreen from '../screens/TermsScreen';
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const [isLoading, setIsLoading] = React.useState(true);
+  const isDevelopment = !__DEV__;
+  const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const hasSeenWalkthrough = useSelector((state: { walkthrough: { hasSeenWalkthrough: boolean } }) => state.walkthrough.hasSeenWalkthrough);
 
-  React.useEffect(() => {
+  useEffect(() => {
     const checkWalkthrough = async () => {
       try {
         const walkthroughSeen = await AsyncStorage.getItem('walkthroughSeen');
@@ -54,7 +55,7 @@ const AppNavigator = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator
-        initialRouteName="Splash"
+        initialRouteName={isDevelopment ? "DevSelector" : "Splash"}
         screenOptions={{ headerShown: false }}
       >
         <Stack.Screen name="Splash" component={SplashScreen} />
