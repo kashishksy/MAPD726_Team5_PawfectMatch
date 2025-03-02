@@ -18,6 +18,7 @@ import PersonalInfoScreen from '../screens/PersonalInfoScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import DevScreenSelector from '../screens/DevScreenSelector';
 import SearchScreen from '../screens/SearchScreen';
+import TermsScreen from '../screens/TermsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -60,6 +61,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Walkthrough" component={WalkthroughScreen} />
         <Stack.Screen name="DevSelector" component={DevScreenSelector} />
         <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="TermsConditions" component={TermsScreen} />
         <Stack.Screen name="UserType" component={UserTypeScreen} />
         <Stack.Screen name="PetType" component={PetTypeScreen} />
         <Stack.Screen name="BreedType" component={BreedTypeScreen} />
@@ -82,6 +84,7 @@ export type RootStackParamList = {
   Walkthrough: undefined;
   DevSelector: undefined;
   Login: undefined;
+  TermsConditions: undefined; // <-- Added this line
   UserType: undefined;
   PetType: undefined;
   BreedType: undefined;

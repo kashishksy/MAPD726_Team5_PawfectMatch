@@ -67,7 +67,7 @@ const LoginScreen = ({ navigation }:any) => {
       return;
     }
 
-    dispatch(setLoading(true));   
+    dispatch(setLoading(true));
 
     try {
       console.log('Attempting to send OTP to:', phoneNumber);
@@ -115,7 +115,7 @@ const LoginScreen = ({ navigation }:any) => {
       }
 
       const { token, exists, user } = verifyResponse.data.data;
-      
+
       // Store token using the auth storage utility
       await storeToken(token);
 
@@ -152,15 +152,15 @@ const LoginScreen = ({ navigation }:any) => {
     <SafeAreaView style={styles.container}>
       {showOTP && (
         <TouchableWithoutFeedback onPress={handleOutsidePress}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <View style={styles.otpOverlay}>
-              <OTPInput onSubmit={handleOTPSubmit} />
-            </View>
-          </TouchableWithoutFeedback>
-        </View>
-  </TouchableWithoutFeedback>
-)}
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
+              <View style={styles.otpOverlay}>
+                <OTPInput onSubmit={handleOTPSubmit} />
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      )}
 
       <View style={styles.logoContainer}>
         <Image
@@ -175,9 +175,9 @@ const LoginScreen = ({ navigation }:any) => {
 
         {/* Phone Number Input */}
         <View style={styles.inputGroup}>
-          
-           {/* Uncomment this to test walkthrough screen */}
-        {/* <TouchableOpacity
+
+          {/* Uncomment this to test walkthrough screen */}
+          {/* <TouchableOpacity
             onPress={async () => {
               await AsyncStorage.removeItem("walkthroughSeen");
               Alert.alert("Walkthrough reset! Restart the app.");
@@ -193,9 +193,9 @@ const LoginScreen = ({ navigation }:any) => {
               <Text style={styles.countryCode}>+1</Text>
             </TouchableOpacity>
             <View style={styles.phoneNumberInput}>
-            <Image source={require('../assets/images/phone-call.png')} // Path to your PNG file
-            style={styles.inputIcon}
-            />
+              <Image source={require('../assets/images/phone-call.png')} // Path to your PNG file
+                style={styles.inputIcon}
+              />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your phone number"
@@ -219,7 +219,10 @@ const LoginScreen = ({ navigation }:any) => {
           </TouchableOpacity>
           <Text style={styles.termsText}>
             I agree to PawfectMatch{" "}
-            <Text style={styles.termsLink}>Terms & Conditions</Text>.
+            <Text style={styles.termsLink} onPress={() => navigation.navigate("TermsConditions")}>
+              Terms & Conditions
+            </Text>
+
           </Text>
         </View>
 
@@ -240,22 +243,22 @@ const LoginScreen = ({ navigation }:any) => {
         </TouchableOpacity>
 
         {/* Login Link */}
-        <View style={styles.loginContainer}>
+        {/* <View style={styles.loginContainer}>
           <Text style={styles.loginText}>Already have an account? </Text>
           <TouchableOpacity>
             <Text style={styles.loginLink}>Sign in</Text>
           </TouchableOpacity>
-        </View>
+        </View> */}
 
         {/* "Or" Text with lines */}
-        <View style={styles.orContainer}>
+        {/* <View style={styles.orContainer}>
           <View style={styles.line} />
           <Text style={styles.orText}>or</Text>
           <View style={styles.line} />
-        </View>
+        </View> */}
 
         {/* Social Login Buttons */}
-        <TouchableOpacity style={styles.socialButton}>
+        {/* <TouchableOpacity style={styles.socialButton}>
           <Image
             source={require("../assets/images/google-icon.png")}
             style={styles.socialIcon}
@@ -269,9 +272,9 @@ const LoginScreen = ({ navigation }:any) => {
             style={styles.socialIcon}
           />
           <Text style={styles.socialButtonText}>Continue with Apple</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
 
-          {/* removing blurview for bug fix */}
+        {/* removing blurview for bug fix */}
         {/* {showOTP && <BlurView style={StyleSheet.absoluteFill} blurAmount={5} />} */}
       </View>
     </SafeAreaView>
