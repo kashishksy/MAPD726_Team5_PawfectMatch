@@ -6,18 +6,22 @@ import PetCategories from '../components/dashboard/PetCategories';
 import NearbyPets from '../components/dashboard/NearbyPets';
 import PreferencePets from '../components/dashboard/PreferencePets';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useNavigation, NavigationProp } from '@react-navigation/native'; // Import NavigationProp
+import { RootStackParamList } from '../navigation/AppNavigator'; // Ensure this is correctly defined
 
 const DashboardScreen = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>(); // Correctly typed navigation object
+
   return (
     <View style={styles.container}>
-      <Header />
+      <Header navigation={navigation} /> {/* Pass the navigation object */}
       <ScrollView showsVerticalScrollIndicator={false}>
         <AdoptionBanner />
         <PetCategories />
         <NearbyPets />
         <PreferencePets />
       </ScrollView>
-      <BottomNavigation/>
+      <BottomNavigation />
     </View>
   );
 };
@@ -29,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DashboardScreen; 
+export default DashboardScreen;

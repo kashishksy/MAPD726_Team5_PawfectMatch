@@ -3,7 +3,10 @@ import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const Header = () => {
+import { RootStackParamList } from '../../navigation/AppNavigator'; // Replace with your actual stack type location
+import { NavigationProp } from '@react-navigation/native';
+
+const Header = ({ navigation }: { navigation: NavigationProp<RootStackParamList> }) => {
   return (
     <View style={styles.header}>
       <View style={styles.leftContainer}>
@@ -14,7 +17,8 @@ const Header = () => {
       </View>
       <Text style={styles.title}>PawfectMatch</Text>
       <View style={styles.rightIcons}>
-        <TouchableOpacity>
+        {/* Navigate to SearchScreen */}
+        <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
           <Icon name="search1" size={24} color="#000" />
         </TouchableOpacity>
         <TouchableOpacity>
@@ -58,10 +62,6 @@ const styles = StyleSheet.create({
     width: 24,
     justifyContent: 'flex-end',
   },
-  icon: {
-    width: 24,
-    height: 24,
-  },
 });
 
-export default Header; 
+export default Header;

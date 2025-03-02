@@ -7,7 +7,8 @@ const screens = [
   'PetType',
   'BreedType',
   'PersonalInfo',
-  'Dashboard'
+  'Dashboard',
+  'SearchScreen'
 ];
 
 const DevScreenSelector = ({ navigation }: any) => {
