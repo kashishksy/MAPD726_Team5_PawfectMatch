@@ -96,7 +96,7 @@ exports.verifyOTP = async (req, res) => {
         const token = jwt.sign(
             { userId: user?._id, mobileNumber },
             PRIVATE_KEY,
-            { algorithm: 'RS256', expiresIn: '1m' }
+            { algorithm: 'RS256', expiresIn: '12h' }
         );
 
         // Delete the OTP record after successful verification
