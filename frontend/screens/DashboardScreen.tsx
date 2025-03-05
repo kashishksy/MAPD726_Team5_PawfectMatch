@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import Header from '../components/dashboard/Header';
 import AdoptionBanner from '../components/dashboard/AdoptionBanner';
@@ -7,14 +7,24 @@ import NearbyPets from '../components/dashboard/NearbyPets';
 import PreferencePets from '../components/dashboard/PreferencePets';
 import BottomNavigation from '../components/common/BottomNavigation';
 import { useNavigation, NavigationProp } from '@react-navigation/native'; // Import NavigationProp
-import { RootStackParamList } from '../navigation/AppNavigator'; // Ensure this is correctly defined
+import CatPawLoader from '../components/CatPawLoader';
 
-const DashboardScreen = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>(); // Correctly typed navigation object
+const DashboardScreen = ({ navigation }: any) => {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+  }, []);
+
+  if (isLoading) {
+    return <CatPawLoader />;
+  }
 
   return (
     <View style={styles.container}>
-      <Header navigation={navigation} /> {/* Pass the navigation object */}
+      <Header navigation={navigation} /> 
       <ScrollView showsVerticalScrollIndicator={false}>
         <AdoptionBanner />
         <PetCategories />

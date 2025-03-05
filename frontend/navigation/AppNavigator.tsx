@@ -19,11 +19,12 @@ import DashboardScreen from '../screens/DashboardScreen';
 import DevScreenSelector from '../screens/DevScreenSelector';
 import SearchScreen from '../screens/SearchScreen';
 import TermsScreen from '../screens/TermsScreen';
+import CatPawLoader from "../components/CatPawLoader";
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isDevelopment = !__DEV__;
+  const isDevelopment = __DEV__;
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const hasSeenWalkthrough = useSelector((state: { walkthrough: { hasSeenWalkthrough: boolean } }) => state.walkthrough.hasSeenWalkthrough);
@@ -69,29 +70,10 @@ const AppNavigator = () => {
         <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
+        <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
       </Stack.Navigator>
     </NavigationContainer>
   );
 };
 
-const AppNav = () => (
-  <Provider store={store}>
-    <AppNavigator />
-  </Provider>
-);
-// navigation/types.ts or in AppNavigator.tsx
-export type RootStackParamList = {
-  Splash: undefined;
-  Walkthrough: undefined;
-  DevSelector: undefined;
-  Login: undefined;
-  TermsConditions: undefined; // <-- Added this line
-  UserType: undefined;
-  PetType: undefined;
-  BreedType: undefined;
-  PersonalInfo: undefined;
-  DashboardScreen: undefined;
-  SearchScreen: undefined;
-};
-
-export default AppNav;
+export default AppNavigator;
