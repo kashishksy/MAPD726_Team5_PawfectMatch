@@ -9,6 +9,7 @@ const screens = [
   'PersonalInfo',
   'Dashboard',
   'SearchScreen',
+  'OwnerOrganizationDetails',
   'CatPawLoader'
 ];
 
