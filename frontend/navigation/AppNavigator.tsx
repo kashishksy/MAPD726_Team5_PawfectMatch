@@ -19,6 +19,7 @@ import DashboardScreen from '../screens/DashboardScreen';
 import DevScreenSelector from '../screens/DevScreenSelector';
 import SearchScreen from '../screens/SearchScreen';
 import TermsScreen from '../screens/TermsScreen';
+import OwnerOrganizationDetailsScreen from '../screens/OwnerOrganizationDetailsScreen';
 import CatPawLoader from "../components/CatPawLoader";
 
 const Stack = createNativeStackNavigator();
@@ -70,6 +71,7 @@ const AppNavigator = () => {
         <Stack.Screen name="PersonalInfo" component={PersonalInfoScreen} />
         <Stack.Screen name="Dashboard" component={DashboardScreen} />
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
+        <Stack.Screen name="OwnerOrganizationDetails" component={OwnerOrganizationDetailsScreen} />
         <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
       </Stack.Navigator>
     </NavigationContainer>
