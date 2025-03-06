@@ -1,46 +1,111 @@
-import React from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, ScrollView } from 'react-native';
-
-const preferencePets = [
-  {
-    id: 1,
-    name: 'Luna',
-    breed: 'Chihuahua',
-    distance: '1.2 km',
-    image: require('../../assets/images/mochi.png'),
-  },
-  {
-    id: 2,
-    name: 'Casper',
-    breed: 'Maine Coon',
-    distance: '1.2 km',
-    image: require('../../assets/images/mochi.png'),
-  },
-  // Add more pets...
-];
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
+import api from '../../services/api';
+import { getToken } from '../../utils/authStorage';
 
 const PreferencePets = () => {
+  const navigation = useNavigation();
+  const [preferenceAnimals, setPreferenceAnimals] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { userData } = useSelector((state: any) => state.auth);
+
+  useEffect(() => {
+    fetchPreferenceAnimals();
+  }, []);
+
+  const fetchPreferenceAnimals = async () => {
+    try {
+      const token = await getToken();
+      const response = await api.post('/animals/search', 
+        {
+          search: "",
+          size: "",
+          age: "",
+          gender: "",
+          page: 1,
+          limit: 5,
+          breedType: userData?.breed_ids[0], // Taking first breed preference
+          petType: ""
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
+      setPreferenceAnimals(response.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching preference animals:', error);
+      // setError(error as string);
+      setLoading(false);
+    }
+  };
+
+  const handleViewAll = () => {
+    // navigation.navigate('PetList', { filter: 'preference' });
+  };
+
+  const handlePetPress = (petId: string) => {
+    // navigation.navigate('PetDetails', { id: petId });
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading recommended pets...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error loading recommended pets: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Based on Your Preferences</Text>
-        <TouchableOpacity>
-          <Text style={styles.viewAll}>View All →</Text>
+        <TouchableOpacity onPress={handleViewAll}>
+          <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        style={styles.scrollView}
-      >
-        {preferencePets.map((pet) => (
-          <TouchableOpacity key={pet.id} style={styles.petCard}>
-            <Image source={pet.image} style={styles.petImage} />
-            <Text style={styles.petName}>{pet.name}</Text>
-            <Text style={styles.petInfo}>{pet.distance} • {pet.breed}</Text>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+
+      {preferenceAnimals.length === 0 ? (
+        <Text style={styles.emptyText}>No matching pets found based on your preferences</Text>
+      ) : (
+        <FlatList
+          data={preferenceAnimals}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item: any) => item._id}
+          renderItem={({ item }) => (
+            <TouchableOpacity 
+              style={styles.petCard}
+                onPress={() => handlePetPress(item._id)}
+            >
+              <Image 
+                source={{ uri: `https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${item.images?.[0]}` }} 
+                style={styles.petImage} 
+              />
+              <View style={styles.petInfo}>
+                <Text style={styles.petName}>{item.name}</Text>
+                <Text style={styles.petBreed}>{item.breedType?.name || 'Unknown breed'}</Text>
+                <Text style={styles.petDistance}>{item.kms?.toFixed(1) || '?'} km away</Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -58,34 +123,53 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#000000',
+    fontWeight: 'bold',
+    color: '#333',
   },
   viewAll: {
     fontSize: 14,
-    color: '#F4A460',
+    color: '#FF6F61',
   },
-  scrollView: {
-    flexDirection: 'row',
+  emptyText: {
+    textAlign: 'center',
+    marginVertical: 20,
+    color: '#666',
   },
   petCard: {
+    width: 160,
     marginRight: 16,
-    width: 150,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom: 10,
   },
   petImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 12,
-    marginBottom: 8,
+    width: '100%',
+    height: 120,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  petInfo: {
+    padding: 12,
   },
   petName: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#000000',
+    fontWeight: 'bold',
+    color: '#333',
   },
-  petInfo: {
+  petBreed: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+  },
+  petDistance: {
     fontSize: 12,
-    color: '#666666',
+    color: '#FF6F61',
+    marginTop: 4,
   },
 });
 

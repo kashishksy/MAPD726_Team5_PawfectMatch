@@ -1,47 +1,47 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
 
-// Define the navigation param list type
-type RootStackParamList = {
-  PetList: { petType: string };
-  // Add other screens as needed
-};
-
-const petTypes = [
-  { id: 'dogs', name: 'Dogs', emoji: '🐕' },
-  { id: 'cats', name: 'Cats', emoji: '🐈' },
-  { id: 'rabbits', name: 'Rabbits', emoji: '🐰' },
-  { id: 'birds', name: 'Birds', emoji: '🦜' },
-  { id: 'reptiles', name: 'Reptiles', emoji: '🦎' },
-  { id: 'fish', name: 'Fish', emoji: '🐠' },
-  { id: 'primates', name: 'Primates', emoji: '🐒' },
-  { id: 'other', name: 'Other', emoji: '🐾' },
-];
-
-const PetCategories = () => {
-  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+const PetCategories = ({ navigation }: any) => {
+  const { petTypes, loading, error } = useSelector((state: any) => state.petTypes);
 
   const handleCategoryPress = (petType: string) => {
     // Navigate to pet type specific screen
     navigation.navigate('PetList', { petType });
   };
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading pet types...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text>Error loading pet types: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.grid}>
-        {petTypes.map((category) => (
+        {petTypes.map((category: any) => (
           <TouchableOpacity 
-            key={category.id} 
+            key={category._id} 
             style={styles.categoryItem}
-            onPress={() => handleCategoryPress(category.id)}
+            onPress={() => handleCategoryPress(category._id)}
           >
             <View style={styles.iconContainer}>
               <Text style={styles.emoji}>{category.emoji}</Text>
             </View>
             <Text style={styles.categoryName}>{category.name}</Text>
           </TouchableOpacity>
-        ))}
+        )).slice(0, 8)}
       </View>
     </View>
   );
@@ -55,10 +55,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    gap: 16,
   },
   categoryItem: {
-    width: '20%', // Slightly adjusted to fit 4 items per row with gap
+    width: '23%',
     alignItems: 'center',
     marginBottom: 16,
   },
@@ -66,21 +65,18 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#FFF8F0',
+    backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#ddd',
   },
   emoji: {
-    fontSize: 32,
+    fontSize: 24,
   },
   categoryName: {
     fontSize: 12,
-    color: '#333333',
     textAlign: 'center',
-    fontFamily: 'Poppins-Regular',
+    color: '#333',
   },
 });
 
