@@ -9,7 +9,7 @@ const petRoutes = require('./src/routes/petRoutes');
 const breedRoutes = require('./src/routes/breedRoutes');
 const animalRoutes = require('./src/routes/animalRoutes');
 const favoriteRoutes = require('./src/routes/favoriteRoutes');
-const chatRoutes = require('./src/routes/chatRoutes');
+// const chatRoutes = require('./src/routes/chatRoutes');
 const errorHandler = require('./src/middleware/errorHandler');
 
 const Chat = require('./src/models/chatModel');
@@ -56,7 +56,7 @@ app.use('/api', petRoutes);
 app.use('/api', breedRoutes);
 app.use('/api', animalRoutes);
 app.use('/api', favoriteRoutes);
-app.use('/api/chat', chatRoutes);
+// app.use('/api/chat', chatRoutes);
 
 // Error handling middleware
 app.use(errorHandler);
