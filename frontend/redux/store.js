@@ -7,6 +7,7 @@ import registrationReducer from './slices/registrationSlice';
 import walkthroughReducer from './slices/walkthroughSlice';
 import petTypesReducer from './slices/petTypesSlice';
 import animalsReducer from './slices/animalsSlice';
+import favoritesReducer from './slices/favoritesSlice';
 
 const store = configureStore({
   reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
     registration: registrationReducer,
     petTypes: petTypesReducer,
     animals: animalsReducer,
+    favorites: favoritesReducer
   },
 });
 
