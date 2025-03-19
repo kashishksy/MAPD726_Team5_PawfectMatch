@@ -23,7 +23,7 @@ const seedAnimals = async () => {
         }
 
         // Helper function to get a random item from an array
-        const getRandomItem = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const getRandomItem = (arr) => (arr.length ? arr[Math.floor(Math.random() * arr.length)] : null);
 
         const sizes = ["Small", "Medium", "Large"];
         const ages = ["Baby", "Young", "Adult", "Senior"];
@@ -33,35 +33,47 @@ const seedAnimals = async () => {
 
         for (let i = 0; i < 50; i++) {
             const randomPet = getRandomItem(pets);
-            const breedOptions = breeds.filter(b => b.petId.equals(randomPet._id));
+            if (!randomPet) {
+                console.warn("Skipping animal creation due to missing pet type.");
+                continue;
+            }
+        
+            const breedOptions = breeds.filter(b => b.petId && b.petId.equals(randomPet._id));
             const randomBreed = getRandomItem(breedOptions);
-
+        
             const animal = {
-                name: faker.animal.dog(), // You can change to `faker.animal.cat()`, `faker.animal.rabbit()`, etc.
+                name: faker.animal.dog(),
                 images: [
                     faker.image.urlPicsumPhotos({ width: 640, height: 480 }),
                     faker.image.urlPicsumPhotos({ width: 640, height: 480 })
                 ],
-                gender: getRandomItem(genders),
+                gender: getRandomItem(["Male", "Female"]),
                 petType: randomPet._id,
                 breedType: randomBreed ? randomBreed._id : null,
-                size: getRandomItem(sizes),
-                age: getRandomItem(ages),
+                size: getRandomItem(["Small", "Medium", "Large"]),
+                age: getRandomItem(["Baby", "Young", "Adult", "Senior"]),
                 location: {
                     lat: faker.location.latitude(),
                     lng: faker.location.longitude(),
                 },
+                address: faker.location.streetAddress(),
                 city: faker.location.city(),
                 state: faker.location.state(),
                 country: faker.location.country(),
-                honourName: faker.person.fullName(),
+                owner: faker.person.fullName(),
                 description: faker.lorem.sentences(3)
             };
-
+        
             animals.push(animal);
         }
+        
 
         await Animal.insertMany(animals);
+
+        await Animal.updateMany(
+            { honourName: { $exists: true } },
+            { $rename: { "honourName": "owner" } }
+        );
         
         mongoose.connection.close();
     } catch (err) {

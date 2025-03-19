@@ -111,7 +111,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\",\r\n    \"otp\" :\"214335\"\r\n}\r\n",
+							"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\",\r\n    \"otp\" :\"701353\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -219,32 +219,34 @@
 								},
 								{
 									"key": "mobileNumber",
-									"value": "8140714725",
+									"value": "8140714728",
 									"type": "text"
 								},
 								{
 									"key": "gender",
 									"value": "Male",
+									"description": "Male,Female",
 									"type": "text"
 								},
 								{
 									"key": "profileImage",
 									"type": "file",
-									"src": "/C:/Users/TechHive-01/Downloads/istockphoto-2156047872-1024x1024.jpg"
+									"src": []
 								},
 								{
 									"key": "pet_ids",
-									"value": "[\"67b701cf560e17760845a6ce\"]",
+									"value": "[\"67b796e2608abedbfae2551b\"]",
 									"type": "text"
 								},
 								{
 									"key": "breed_ids",
-									"value": "[\"67b701d0560e17760845a6da\"]",
+									"value": "[\"67b796e2608abedbfae25527\"]",
 									"type": "text"
 								},
 								{
 									"key": "userType",
 									"value": "Pet Owner",
+									"description": "Pet Owner,Pet Adopter",
 									"type": "text"
 								}
 							]
@@ -391,7 +393,69 @@
 							]
 						}
 					},
-					"response": []
+					"response": [
+						{
+							"name": "profile",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost:5000/api/auth/profile",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"auth",
+										"profile"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "X-Powered-By",
+									"value": "Express"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Content-Length",
+									"value": "405"
+								},
+								{
+									"key": "ETag",
+									"value": "W/\"195-XaAMjARE3372xj/PR28QGu1BiZc\""
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 28 Feb 2025 06:09:51 GMT"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "Keep-Alive",
+									"value": "timeout=5"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": 200,\n    \"message\": \"User profile fetched successfully\",\n    \"data\": {\n        \"userId\": \"67c0d27917f61662bb8e7e96\",\n        \"fullName\": \"John Doe\",\n        \"phone_code\": \"91\",\n        \"mobile_no\": \"8140714725\",\n        \"gender\": \"Male\",\n        \"profile_pic_url\": null,\n        \"pet_ids\": [\n            \"67b701cf560e17760845a6ce\"\n        ],\n        \"breed_ids\": [\n            \"67b701d0560e17760845a6da\"\n        ],\n        \"user_type\": \"Pet Owner\",\n        \"createdAt\": \"2025-02-27T21:00:41.390Z\",\n        \"updatedAt\": \"2025-02-27T21:00:41.390Z\"\n    },\n    \"error\": false\n}"
+						}
+					]
 				},
 				{
 					"name": "profile/update",
@@ -413,18 +477,9 @@
 									"type": "text"
 								},
 								{
-									"key": "countryCode",
-									"value": "91",
-									"type": "text"
-								},
-								{
-									"key": "mobileNumber",
-									"value": "8140714725",
-									"type": "text"
-								},
-								{
 									"key": "gender",
 									"value": "Male",
+									"description": "Male,Female",
 									"type": "text"
 								},
 								{
@@ -440,6 +495,7 @@
 								{
 									"key": "userType",
 									"value": "Pet Owner",
+									"description": "Pet Owner,Pet Adopter",
 									"type": "text"
 								}
 							]
@@ -468,9 +524,21 @@
 			"item": [
 				{
 					"name": "list",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://localhost:5000/api/pets",
 							"protocol": "http",
@@ -553,7 +621,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"pet_id\": \"67b701cf560e17760845a6ce\"\r\n}",
+							"raw": "{\r\n    \"pet_id\": \"67b796e2608abedbfae2551b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -657,7 +725,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"search\": \"\",\r\n    \"size\": \"\",\r\n    \"age\": \"\",\r\n    \"gender\": \"\",\r\n    \"page\": 1,\r\n    \"limit\": 10,\r\n    \"breedType\": \"\",\r\n    \"petType\": \"67bc18356310726a2d0be9d4\"\r\n}",
+							"raw": "{\r\n    \"searchName\": \"Xiasi Dog\",   //animal name\r\n    \"searchLocation\": \"310\",     //address\r\n    \"size\": \"Large\",             //Small, Medium, Large\r\n    \"age\": \"Young\",              //Baby, Young, Adult, Senior\r\n    \"gender\": \"Male\",            //Male, Female\r\n    \"page\": 1,\r\n    \"limit\": 10,\r\n    \"breedType\": \"\",\r\n    \"petType\": \"\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -682,6 +750,9 @@
 				},
 				{
 					"name": "listAnimal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -691,6 +762,15 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "http://localhost:5000/api/animals?limit=10&page=1",
 							"protocol": "http",
@@ -718,6 +798,9 @@
 				},
 				{
 					"name": "detailAnimal",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [
@@ -727,8 +810,12 @@
 								"type": "text"
 							}
 						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
-							"raw": "http://localhost:5000/api/animals/67bc1a81e43500fa1454bd32",
+							"raw": "http://localhost:5000/api/animals/67c0c28e0428d6d493359e3f",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -737,7 +824,7 @@
 							"path": [
 								"api",
 								"animals",
-								"67bc1a81e43500fa1454bd32"
+								"67c0c28e0428d6d493359e3f"
 							]
 						}
 					},
@@ -813,6 +900,249 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "addEditAnimal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "name",
+									"value": "Bella",
+									"type": "text"
+								},
+								{
+									"key": "gender",
+									"value": "Male",
+									"description": "[\"Male\", \"Female\"]",
+									"type": "text"
+								},
+								{
+									"key": "petType",
+									"value": "67b796e2608abedbfae2551b",
+									"type": "text"
+								},
+								{
+									"key": "breedType",
+									"value": "67b796e2608abedbfae25529",
+									"type": "text"
+								},
+								{
+									"key": "size",
+									"value": "Small",
+									"description": "[\"Small\", \"Medium\", \"Large\"]",
+									"type": "text"
+								},
+								{
+									"key": "age",
+									"value": "Young",
+									"description": "[\"Baby\", \"Young\", \"Adult\", \"Senior\"]",
+									"type": "text"
+								},
+								{
+									"key": "location",
+									"value": "{  \"lat\": \"88.0266\",  \"lng\": \"155.1961\"}",
+									"type": "text"
+								},
+								{
+									"key": "address",
+									"value": "67764 Casimir",
+									"type": "text"
+								},
+								{
+									"key": "city",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "state",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "country",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "owner",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/C:/Users/TechHive-01/Downloads/john.jpg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/animal/67da9db390bce7fe758a9461",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"animal",
+								"67da9db390bce7fe758a9461"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Chat",
+			"item": [
+				{
+					"name": "chat/start",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"recipientId\":\"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/start",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"start"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat/send",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"chatId\":\"67c197ff21fa29a0d0b20332\",\r\n    \"message\" : \"Hiiii\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5000/api/chat/send",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"send"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat/chats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/chat/chats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"chats"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "chat/messages",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:5000/api/chat/messages/67c197ff21fa29a0d0b20332",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5000",
+							"path": [
+								"api",
+								"chat",
+								"messages",
+								"67c197ff21fa29a0d0b20332"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
@@ -842,7 +1172,7 @@
 	"variable": [
 		{
 			"key": "token",
-			"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2JjMzlmZmFiN2RmNzdmNDg5ODgwMDQiLCJtb2JpbGVOdW1iZXIiOiI4MTQwNzE0NzI1IiwiaWF0IjoxNzQwMzkwNzA2LCJleHAiOjE3NDA5OTU1MDZ9.oUNF6h4prEllw9pjxQix3L34TSe7PAQmFD7Z-GWlcjga52ICPdyJfoRd4a617Izu-Qc2U6xTS5AvRumRxgsec3b6soyOZikll4GJXvKFdIokmnDxFyt4jO2cUL7iQJ-ANPSVqHgTroZaIkKI6kgFNX6gBvIeP73S0fpjpwhkBh1EylD0CTc_HeLhXQKh_g_DBzSDJzEpOz-rO9akmEwZvrQqw1wV9iRtXTj8mVh-4xcqrEKmXvc3HGkqJAxSL6YatXhIPidsbbeRVDNLSd3Zg16F7XczSqUsOfB2EvBIZq5_XtUz1H4HxRMMoyh0B7dH9aiEBRGv6yeWYB8dljhqtw",
+			"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2MwZDI3OTE3ZjYxNjYyYmI4ZTdlOTYiLCJtb2JpbGVOdW1iZXIiOiI4MTQwNzE0NzI1IiwiaWF0IjoxNzQyMzY3NDM5LCJleHAiOjE3NDI5NzIyMzl9.EC20EPxW6HtoP-Ay0jQ668YURWhaNbvdlMbvYU8CpPewY7XKhVmjKV9mNh2wZTMwhNawx0FC6aL3CoquyJCU2HFt1sk4JePhSkMHBzFDk0ORyx3_8XZgXyHHVO4glnjcO-Q3KJgGEG0gjzwViOjNcaAhIqX8AIYgcs0i5zoLqtoCJqZWczwKnmaxoJRDWFOt1NhtgJ61gTrgIHd6hWlvyDcYObrjqKitXTHfXrmsxnjsuK9Vol5ssu8D6bGAyn7AXQmb4ka552Rm0vbJouJkW0gjBGcbD8wKSIY_6I2_XNInaLtBEKgLMNS4mWhiFILAbQhpFG9YiKkpKF6S-4WC3g",
 			"type": "string"
 		}
 	]

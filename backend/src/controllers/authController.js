@@ -42,14 +42,15 @@ const PRIVATE_KEY = fs.readFileSync(privateKeyPath, 'utf8');
 
 exports.sendOTP = async (req, res) => {
     const { countryCode, mobileNumber } = req.body;
+
     // Validation
     if (!countryCode || !mobileNumber) {
         return res.status(400).json(errorResponse('Country code and mobile number are required'));
     }
 
     const formattedNumber = `+${countryCode}${mobileNumber}`;
-    console.log("Sending OTP to:", formattedNumber);
-    console.log("Using Twilio From Number:", process.env.TWILIO_PHONE);
+    // console.log("Sending OTP to:", formattedNumber);
+    // console.log("Using Twilio From Number:", process.env.TWILIO_PHONE);
 
     const otp = generateOTP();
 
@@ -70,7 +71,7 @@ exports.sendOTP = async (req, res) => {
             from: process.env.TWILIO_PHONE,
             to: formattedNumber
         });
-        
+
         return res.status(200).json(successResponse('OTP sent successfully'));
 
     } catch (err) {
@@ -82,6 +83,11 @@ exports.sendOTP = async (req, res) => {
 exports.verifyOTP = async (req, res) => {
     const { countryCode, mobileNumber, otp } = req.body;
 
+    // Validation
+    if (!countryCode || !mobileNumber || !otp) {
+        return res.status(400).json(errorResponse('Country code, mobile number, and OTP are required'));
+    }
+
     try {
         const otpRecord = await Authentication.findOne({ countryCode, mobileNumber, otp });
 
@@ -92,148 +98,123 @@ exports.verifyOTP = async (req, res) => {
         // Check if user exists
         const user = await User.findOne({ countryCode, mobileNumber });
 
-        // Generate token regardless of whether user exists or not
-        const token = jwt.sign(
-            { userId: user?._id, mobileNumber },
-            PRIVATE_KEY,
-            { algorithm: 'RS256', expiresIn: '12h' }
-        );
+        let token = null;
+        let is_register = !!user; // If user exists, is_register = true; otherwise, false
+
+        // If the user exists, generate JWT token
+        if (user) {
+            token = jwt.sign(
+                { userId: user._id, mobileNumber: user.mobileNumber },
+                PRIVATE_KEY,
+                { algorithm: 'RS256', expiresIn: '7d' }
+            );
+        }
 
         // Delete the OTP record after successful verification
         await Authentication.deleteOne({ _id: otpRecord._id });
 
-        return res.status(200).json({
-            status: 200,
-            message: 'OTP verified successfully',
-            data: {
-                exists: !!user,
-                token,
-                user: user
-            },
-            error: false
-        });
+        return res.status(200).json(successResponse('OTP verified successfully', {
+            is_register,
+            token
+        }));
 
     } catch (err) {
         console.error("Error verifying OTP:", err);
-        return res.status(500).json(errorResponse('Failed to verify OTP'));
+        return res.status(500).json(errorResponse('Failed to verify OTP', 500));
     }
 };
 
 exports.registerUser = async (req, res) => {
-    try {
-        const { fullName, countryCode, mobileNumber, gender, pet_ids, breed_ids, userType, profileImage } = req.body;
+    upload(req, res, async (err) => {
+        let uploadedFilePath = req.file ? path.join(__dirname, '../uploads/', req.file.filename) : null;
+
+        if (err) {
+            let errorMessage = 'Profile image upload failed';
+
+            if (err.message.includes('Only JPG, JPEG, and PNG files are allowed!')) {
+                errorMessage = 'Invalid file format. Only JPG, JPEG, and PNG are allowed.';
+            } else if (err.message.includes('File too large')) {
+                errorMessage = 'File size exceeds the limit (2MB).';
+            }
+
+            return res.status(400).json(errorResponse(errorMessage));
+        }
+
+        const { fullName, countryCode, mobileNumber, gender, pet_ids, breed_ids, userType } = req.body;
 
         // Validation for required fields
-        const requiredFields = { fullName, countryCode, mobileNumber, gender, userType, profileImage,pet_ids,breed_ids };
+        const requiredFields = { fullName, countryCode, mobileNumber, gender, userType };
         const missingFields = Object.keys(requiredFields).filter(field => !requiredFields[field]);
 
         if (missingFields.length > 0) {
+            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
             return res.status(400).json(errorResponse(`${missingFields[0]} field is required`));
         }
 
         if (!['Pet Owner', 'Pet Adopter'].includes(userType)) {
+            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
             return res.status(400).json(errorResponse('Invalid user type'));
         }
 
-        // Check if user already exists
-        let existingUser = await User.findOne({ mobileNumber });
+        try {
+            // Check if user already exists
+            let existingUser = await User.findOne({ mobileNumber });
 
-        if (existingUser) {
-            return res.status(400).json(errorResponse('User already registered with this mobile number'));
-        }
+            if (existingUser) {
+                if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
+                return res.status(400).json(errorResponse('User already registered with this mobile number'));
+            }
 
-        const newUser = new User({
-            fullName,
-            countryCode,
-            mobileNumber,
-            gender,
-            profileImage, // Store the avatar URL directly
-            pet_ids: pet_ids ? JSON.parse(pet_ids) : [],
-            breed_ids: breed_ids ? JSON.parse(breed_ids) : [],
-            userType
-        });
+            const hostUrl = `${req.protocol}://${req.get('host')}`;
 
-        await newUser.save();
-        console.log("user saved successfully in database")
+            const newUser = new User({
+                fullName,
+                countryCode,
+                mobileNumber,
+                gender,
+                profileImage: uploadedFilePath ? `${hostUrl}/uploads/${req.file.filename}` : null,
+                pet_ids: pet_ids ? JSON.parse(pet_ids) : [],
+                breed_ids: breed_ids ? JSON.parse(breed_ids) : [],
+                userType
+            });
 
-        const token = jwt.sign(
-            { userId: newUser._id, mobileNumber: newUser.mobileNumber },
-            PRIVATE_KEY,
-            { algorithm: 'RS256', expiresIn: '12h' }
-        );
-        console.log("token generated successfully")
-        // Construct response data
-        const responseData = {
-            userId: newUser._id,
-            fullName: newUser.fullName,
-            phone_code: newUser.countryCode,
-            mobile_no: newUser.mobileNumber,
-            gender: newUser.gender,
-            profile_pic_url: newUser.profileImage,
-            pet_ids: newUser.pet_ids,
-            breed_ids: newUser.breed_ids,
-            user_type: newUser.userType,
-            token: token,
-            createdAt: newUser.createdAt,
-            updatedAt: newUser.updatedAt
-        };
-        console.log("response data generated successfully")
-        res.status(200).json({
-            status: 200,
-            message: "Register successfully !!",
-            data: responseData,
-            error: false
-        });
+            await newUser.save();
 
-    } catch (err) {
-        console.error("Error registering user:", err);
-        return res.status(500).json(errorResponse('Failed to register user'));
-    }
-};
-
-exports.checkUser = async (req, res) => {
-    const { countryCode, mobileNumber } = req.body;
-
-    try {
-        const user = await User.findOne({ countryCode, mobileNumber });
-        
-        if (user) {
             const token = jwt.sign(
-                { userId: user._id, mobileNumber },
+                { userId: newUser._id, mobileNumber: newUser.mobileNumber },
                 PRIVATE_KEY,
-                { algorithm: 'RS256', expiresIn: '12h' }
+                { algorithm: 'RS256', expiresIn: '7d' }
             );
 
-            return res.status(200).json({
+            // Construct response data
+            const responseData = {
+                userId: newUser._id,
+                fullName: newUser.fullName,
+                phone_code: newUser.countryCode,
+                mobile_no: newUser.mobileNumber,
+                gender: newUser.gender,
+                profile_pic_url: newUser.profileImage,
+                pet_ids: newUser.pet_ids,
+                breed_ids: newUser.breed_ids,
+                user_type: newUser.userType,
+                token: token,
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt
+            };
+
+            res.status(200).json({
                 status: 200,
-                message: "User found",
-                data: {
-                    exists: true,
-                    token,
-                    user: {
-                        userId: user._id,
-                        userType: user.userType,
-                        fullName: user.fullName,
-                        mobileNumber: user.mobileNumber,
-                        countryCode: user.countryCode,
-                        profileImage: user.profileImage
-                    }
-                },
+                message: "Register successfully !!",
+                data: responseData,
                 error: false
             });
+
+        } catch (err) {
+            console.error("Error registering user:", err);
+            if (uploadedFilePath && fs.existsSync(uploadedFilePath)) fs.unlinkSync(uploadedFilePath);
+            return res.status(500).json(errorResponse('Failed to register user'));
         }
-
-        return res.status(200).json({
-            status: 200,
-            message: "User not found",
-            data: { exists: false },
-            error: false
-        });
-
-    } catch (err) {
-        console.error("Error checking user:", err);
-        return res.status(500).json(errorResponse('Failed to check user'));
-    }
+    });
 };
 
 exports.profileUser = async (req, res) => {

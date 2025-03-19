@@ -1,7 +1,26 @@
 const Animal = require('../models/animalModel');
+const fs = require('fs');
+const path = require('path');
+const multer = require('multer');
 const Favorite = require('../models/favoriteAnimalModel');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadPath = path.join(__dirname, '../../uploads/animals');
+        if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+        }
+        cb(null, uploadPath);
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({ storage: storage }).array('images', 5);
+
 // Default center location (change as needed)
-const DEFAULT_LOCATION = { lat: 37.7749, lng: -122.4194 }; // San Francisco (Example)
+const DEFAULT_LOCATION = { lat: 43.7756435641, lng: -79.2340690637 };
 
 // Get Animal List API
 exports.getAnimalList = async (req, res) => {
@@ -60,12 +79,13 @@ exports.getAnimalList = async (req, res) => {
 
 exports.searchAnimals = async (req, res) => {
     try {
-        const { page = 1, limit = 10, search, size, age, gender, petType, breedType } = req.body;
+        const { page = 1, limit = 10, searchName, searchLocation, size, age, gender, petType, breedType } = req.body;
         const userId = req.user ? req.user._id : null; // Get user ID from auth middleware
 
         const query = {};
 
-        if (search) query.name = { $regex: new RegExp(search, 'i') };
+        if (searchName) query.name = { $regex: new RegExp(searchName, 'i') };
+        if (searchLocation) query.address = { $regex: new RegExp(searchLocation, 'i') };
         if (size) query.size = { $regex: new RegExp(`^${size}$`, 'i') };
         if (age) query.age = { $regex: new RegExp(`^${age}$`, 'i') };
         if (gender) {
@@ -179,6 +199,114 @@ exports.getAnimalDetails = async (req, res) => {
             error: err.message
         });
     }
+};
+
+
+const validEnums = {
+    gender: ["Male", "Female"],
+    size: ["Small", "Medium", "Large"],
+    age: ["Baby", "Young", "Adult", "Senior"]
+};
+
+exports.addOrEditAnimal = async (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(500).json({ status: 500, message: "File upload error", error: err.message });
+        }
+
+        try {
+            const { id } = req.params;
+            const userId = req.user ? req.user._id : null; // Get user ID from auth middleware
+
+            console.log(userId);
+            if (!userId) {
+                return res.status(401).json({ status: 401, message: "Unauthorized: User not logged in." });
+            }
+
+            const requiredFields = ["name", "gender", "petType", "size", "age", "location", "address", "city", "state", "country", "owner", "description"];
+
+            for (const field of requiredFields) {
+                if (!req.body[field]) {
+                    return res.status(400).json({ status: 400, message: `${field} is required.` });
+                }
+            }
+
+            // Parse location if sent as string
+            let location;
+            try {
+                location = typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
+            } catch (parseError) {
+                return res.status(400).json({ status: 400, message: "Invalid location format. It must be a valid JSON object." });
+            }
+
+            // Validate latitude and longitude
+            if (!location.lat || !location.lng || isNaN(location.lat) || isNaN(location.lng)) {
+                return res.status(400).json({ status: 400, message: "Valid latitude and longitude are required." });
+            }
+
+            // Ensure location values are numbers
+            location.lat = parseFloat(location.lat);
+            location.lng = parseFloat(location.lng);
+
+            // Ensure address is a string (Fix for address error)
+            req.body.address = Array.isArray(req.body.address) ? req.body.address.join(" ") : req.body.address;
+
+            for (const field in validEnums) {
+                if (req.body[field] && !validEnums[field].includes(req.body[field])) {
+                    return res.status(400).json({ status: 400, message: `${field} must be one of ${validEnums[field].join(", ")}.` });
+                }
+            }
+
+            let images = req.files ? req.files.map(file => `/uploads/animals/${file.filename}`) : [];
+
+            let animal;
+            if (id) {
+                // Fetch existing animal
+                animal = await Animal.findById(id);
+                if (!animal) {
+                    return res.status(404).json({ status: 404, message: "Animal not found." });
+                }
+
+                // console.log(animal.owner.toString(), userId.toString());
+                // if (animal.owner.toString() !== userId.toString()) {
+                //     return res.status(403).json({ status: 403, message: "Forbidden: You do not have permission to edit this animal." });
+                // }
+
+                // Remove old images if new ones are uploaded
+                if (images.length && animal.images.length) {
+                    animal.images.forEach((imagePath) => {
+                        const fullPath = path.join(__dirname, "../../", imagePath);
+                        if (fs.existsSync(fullPath)) {
+                            fs.unlinkSync(fullPath); // Delete old image
+                        }
+                    });
+                }
+
+                // Update existing animal
+                animal = await Animal.findByIdAndUpdate(id, {
+                    ...req.body,
+                    location,
+                    images: images.length ? images : animal.images // Keep old images if no new ones are uploaded
+                }, { new: true });
+            } else {
+                // Create new animal
+                animal = await Animal.create({
+                    ...req.body,
+                    location,
+                    images
+                });
+            }
+
+            return res.status(200).json({
+                status: 200,
+                message: id ? "Animal updated successfully!" : "Animal added successfully!",
+                data: animal
+            });
+        } catch (err) {
+            console.error("Error in addOrEditAnimal:", err);
+            return res.status(500).json({ status: 500, message: "Internal server error", error: err.message });
+        }
+    });
 };
 
 function calculateDistance(lat1, lon1, lat2, lon2) {

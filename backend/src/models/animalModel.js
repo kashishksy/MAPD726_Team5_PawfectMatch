@@ -12,10 +12,11 @@ const AnimalSchema = new mongoose.Schema({
         lat: { type: Number, required: true },
         lng: { type: Number, required: true }
     },
+    address: { type: String, required: true },
     city: { type: String, required: true },
     state: { type: String, required: true },
     country: { type: String, required: true },
-    honourName: { type: String, required: true },
+    owner: { type: String, required: true },
     description: { type: String, required: true }
 }, { timestamps: true });
 
