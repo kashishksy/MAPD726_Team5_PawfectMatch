@@ -21,11 +21,12 @@ import SearchScreen from '../screens/SearchScreen';
 import TermsScreen from '../screens/TermsScreen';
 import OwnerOrganizationDetailsScreen from '../screens/OwnerOrganizationDetailsScreen';
 import CatPawLoader from "../components/CatPawLoader";
+import Favorites from '../screens/Favorites';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
-  const isDevelopment = __DEV__;
+  const isDevelopment = !__DEV__;
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
   const hasSeenWalkthrough = useSelector((state: { walkthrough: { hasSeenWalkthrough: boolean } }) => state.walkthrough.hasSeenWalkthrough);
@@ -73,6 +74,7 @@ const AppNavigator = () => {
         <Stack.Screen name="SearchScreen" component={SearchScreen} />
         <Stack.Screen name="OwnerOrganizationDetails" component={OwnerOrganizationDetailsScreen} />
         <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
+        <Stack.Screen name="Favorites" component={Favorites} />
       </Stack.Navigator>
     </NavigationContainer>
   );
