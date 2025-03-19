@@ -48,6 +48,9 @@ const BottomNavigation = () => {
         index: 0,
         routes: [{ name: 'Login' as never }],
       });
+    } else if (tabId === 'favorites') {
+      navigation.navigate('Favorites' as never);
+      setActiveTab(tabId);
     } else {
       setActiveTab(tabId);
     }
