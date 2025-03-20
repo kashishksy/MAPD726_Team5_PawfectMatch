@@ -6,6 +6,7 @@ import { toggleFavorite } from '../redux/slices/favoritesSlice';
 import { RootState } from '../redux/types';
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import BottomNavigation from '../components/common/BottomNavigation';
 
 const Favorites = ({ navigation }: any) => {
   const favorites = useSelector((store: RootState) => store.favorites.items);
@@ -13,6 +14,10 @@ const Favorites = ({ navigation }: any) => {
 
   const handleRemoveFromFavorites = (item: any) => {
     dispatch(toggleFavorite(item));
+  };
+
+  const handleBack = () => {
+    navigation.navigate('Dashboard');
   };
 
   const renderItem = ({ item }: { item: any }) => (
@@ -39,30 +44,33 @@ const Favorites = ({ navigation }: any) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => navigation.goBack()}
-        >
-          <Image 
-            source={require('../assets/images/back_icon.png')} 
-            style={styles.inputIcon} 
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>Favorites</Text>
-      </View>
+      <View style={styles.mainContainer}>
+        <View style={styles.header}>
+          <TouchableOpacity 
+            style={styles.backButton} 
+            onPress={handleBack}
+          >
+            <Image 
+              source={require('../assets/images/back_icon.png')} 
+              style={styles.inputIcon} 
+            />
+          </TouchableOpacity>
+          <Text style={styles.title}>Favorites</Text>
+        </View>
 
-      {favorites.length === 0 ? (
-        <Text style={styles.emptyText}>No favorites yet</Text>
-      ) : (
-        <FlatList
-          data={favorites}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          contentContainerStyle={styles.listContainer}
-        />
-      )}
+        {favorites.length === 0 ? (
+          <Text style={styles.emptyText}>No favorites yet</Text>
+        ) : (
+          <FlatList
+            data={favorites}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+            contentContainerStyle={styles.listContainer}
+          />
+        )}
+      </View>
+      <BottomNavigation />
     </SafeAreaView>
   );
 };
@@ -71,6 +79,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+  },
+  mainContainer: {
+    flex: 1,
   },
   header: {
     flexDirection: 'row',
