@@ -11,7 +11,7 @@ const getAuthHeader = async () => {
 };
 
 const api = axios.create({
-  baseURL: 'http://192.168.2.36:3000/api',
+  baseURL: 'https://mapd726-team5-pawfectmatch.onrender.com/api',
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',

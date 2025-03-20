@@ -22,6 +22,8 @@ import TermsScreen from '../screens/TermsScreen';
 import OwnerOrganizationDetailsScreen from '../screens/OwnerOrganizationDetailsScreen';
 import CatPawLoader from "../components/CatPawLoader";
 import Favorites from '../screens/Favorites';
+import PetListScreen from "../screens/PetListScreen";
+import PetDetailsScreen from "../screens/PetDetailsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,6 +77,8 @@ const AppNavigator = () => {
         <Stack.Screen name="OwnerOrganizationDetails" component={OwnerOrganizationDetailsScreen} />
         <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
         <Stack.Screen name="Favorites" component={Favorites} />
+        <Stack.Screen name="PetListScreen" component={PetListScreen} />
+        <Stack.Screen name="PetDetails" component={PetDetailsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -31,6 +31,7 @@ const SearchScreen = ({ navigation }: any) => {
 
   const handleSearch = () => {
     console.log({ location, petType, gender, size, age });
+    navigation.navigate('PetListScreen', { location, petType, gender, size, age });
   };
 
   return (

@@ -3,14 +3,16 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 
 const screens = [
   'Login',
+  'PersonalInfo',
   'UserType',
   'PetType',
   'BreedType',
-  'PersonalInfo',
+  
   'Dashboard',
   'SearchScreen',
   'OwnerOrganizationDetails',
-  'CatPawLoader'
+  'CatPawLoader',
+  'PetListScreen'
 ];
 
 const DevScreenSelector = ({ navigation }: any) => {
