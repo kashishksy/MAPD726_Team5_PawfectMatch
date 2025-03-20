@@ -101,8 +101,8 @@ const NearbyPets = () => {
                     style={styles.petImage}
                     onError={(error) => {
                       console.error('Image loading error for:', item.name);
-                      console.error('Image URL:', `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`);
-                      console.error('Error details:', error.nativeEvent);
+                      // console.error('Image URL:', `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`);
+                      // console.error('Error details:', error.nativeEvent);
                     }}
                   />
                   <TouchableOpacity 

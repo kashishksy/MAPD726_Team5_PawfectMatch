@@ -167,14 +167,14 @@ const PetListScreen = ({ navigation, route }: any) => {
             <Ionicons 
               name={favorites[item._id] ? "heart" : "heart-outline"} 
               size={24} 
-              color={favorites[item._id] ? "#FF9D42" : "#fff"} 
+              color={favorites[item._id] ? "#FF6F61" : "#fff"} 
             />
           </TouchableOpacity>
         </View>
         <Text style={styles.petName}>{item.name}</Text>
         <View style={styles.petInfoRow}>
           <View style={styles.locationInfo}>
-            <Ionicons name="location-outline" size={16} color="#FF9D42" />
+            <Ionicons name="location-outline" size={16} color="#FF6F61" />
             <Text style={styles.distanceText}>{item.kms?.toFixed(1) || '1.2'} km</Text>
           </View>
           <Text style={styles.breedText}>{item.breedType?.name}</Text>
@@ -279,10 +279,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginHorizontal: 8,
     borderRadius: 20,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FF6F61',
   },
   selectedCategory: {
-    backgroundColor: '#FF9D42',
+    backgroundColor: '#FF6F61',
   },
   categoryIcon: {
     width: 20,

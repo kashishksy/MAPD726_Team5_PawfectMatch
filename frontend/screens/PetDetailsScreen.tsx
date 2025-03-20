@@ -117,18 +117,23 @@ const PetDetailsScreen = ({ route, navigation }) => {
           </View>
 
           {/* Shelter Info */}
-          <View style={styles.shelterContainer}>
+          <TouchableOpacity 
+            style={styles.shelterContainer}
+            onPress={() => navigation.navigate('OwnerOrganizationDetails', { 
+              organizationId: pet?.organizationId 
+            })}
+          >
             <View style={styles.shelterIconContainer}>
               <Ionicons name="home-outline" size={24} color="#FF9D42" />
             </View>
             <View style={styles.shelterInfo}>
-              <Text style={styles.shelterName}>Happy Tails Animal Rescue</Text>
+              <Text style={styles.shelterName}>{pet?.organizationName || 'Happy Tails Animal Rescue'}</Text>
               <Text style={styles.shelterAddress}>{pet?.city}, {pet?.state}</Text>
             </View>
             <TouchableOpacity style={styles.directionButton}>
               <Ionicons name="navigate-outline" size={24} color="#FF9D42" />
             </TouchableOpacity>
-          </View>
+          </TouchableOpacity>
 
           {/* About Section */}
           <View style={styles.section}>
@@ -332,7 +337,7 @@ const styles = StyleSheet.create({
   },
   adoptButton: {
     flex: 1,
-    backgroundColor: '#FF9D42',
+    backgroundColor: '#FF6F61',
     borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',

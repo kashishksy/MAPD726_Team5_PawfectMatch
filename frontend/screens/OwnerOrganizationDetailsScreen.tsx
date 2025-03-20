@@ -228,15 +228,18 @@ const styles = StyleSheet.create({
     },
     tabContainer: { 
         flexDirection: "row", 
-        marginVertical: 16, 
-        justifyContent: "center" 
+        marginVertical: 16,
+        paddingHorizontal: 16,
+        justifyContent: "space-between"
     },
     tabButton: { 
+        flex: 1,
         paddingVertical: 12, 
         paddingHorizontal: 20, 
         borderRadius: 8, 
         backgroundColor: "#EAEAEA", 
-        marginHorizontal: 8 
+        marginHorizontal: 4,
+        alignItems: "center"
     },
     activeTab: { 
         backgroundColor: "#FF6F61" 
