@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface Animal {
+export interface Animal {
   _id: string;
   name: string;
+  images: string[];
   petType: {
     _id: string;
     name: string;
@@ -70,4 +71,4 @@ const animalsSlice = createSlice({
 });
 
 export const { fetchAnimalsStart, fetchAnimalsSuccess, fetchAnimalsFailure } = animalsSlice.actions;
-export default animalsSlice.reducer; 
+export default animalsSlice.reducer;

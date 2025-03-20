@@ -1,12 +1,19 @@
+//@ts-check
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import api from '../../services/api';
 import { getToken } from '../../utils/authStorage';
 
+// Define the navigation param list type
+type RootStackParamList = {
+  PetDetails: { petId: string };
+  PetList: { filter: string };
+};
+
 const PreferencePets = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const [preferenceAnimals, setPreferenceAnimals] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,6 +44,8 @@ const PreferencePets = () => {
           }
         }
       );
+
+      console.log('Preference Animals:', response.data.data);
       
       setPreferenceAnimals(response.data.data);
       setLoading(false);
@@ -48,11 +57,11 @@ const PreferencePets = () => {
   };
 
   const handleViewAll = () => {
-    // navigation.navigate('PetList', { filter: 'preference' });
+    navigation.navigate('PetList', { filter: 'preference' });
   };
 
   const handlePetPress = (petId: string) => {
-    // navigation.navigate('PetDetails', { id: petId });
+    navigation.navigate('PetDetails', { petId: petId });
   };
 
   if (loading) {

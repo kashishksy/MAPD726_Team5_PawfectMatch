@@ -1,24 +1,38 @@
+//@ts-check
 import React from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { toggleFavorite } from '../../redux/slices/favoritesSlice';
 import { RootState } from '../../redux/types';
+import type { Animal } from '../../redux/slices/animalsSlice';
+
+// Define types for navigation
+type RootStackParamList = {
+  NearbyPets: undefined;
+  PetDetails: { petId: string };
+};
 
 const NearbyPets = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useDispatch();
   const { animals, loading, error } = useSelector((state: RootState) => state.animals);
   const favorites = useSelector((state: RootState) => state.favorites.items);
 
   // Sort and filter animals by distance
-  const nearbyAnimals = [...animals]
-    .filter(animal => animal.kms !== null && animal.kms !== undefined)
-    .sort((a, b) => (a.kms || 0) - (b.kms || 0))
+  const nearbyAnimals = animals
+    .filter((animal: Animal) => animal.kms !== null && animal.kms !== undefined)
+    .sort((a: Animal, b: Animal) => (a.kms || 0) - (b.kms || 0))
     .slice(0, 5);
 
-  const handleToggleFavorite = (pet: any) => {
+  console.log('Nearby Animals:', nearbyAnimals.map(animal => ({
+    id: animal._id,
+    name: animal.name,
+    imageUrl: animal.images?.[0] ? `https://res.cloudinary.com/dkcerk04u/image/upload/${animal.images[0]}` : 'No image'
+  })));
+
+  const handleToggleFavorite = (pet: Animal) => {
     dispatch(toggleFavorite({
       id: pet._id,
       title: pet.name,
@@ -31,11 +45,11 @@ const NearbyPets = () => {
   };
 
   const handleViewAll = () => {
-    //navigation.navigate('NearbyPets');
+    navigation.navigate('NearbyPets');
   };
 
   const handlePetPress = (petId: string) => {
-    // navigation.navigate('PetDetails', { id: petId });
+    navigation.navigate('PetDetails', { petId });
   };
 
   if (loading) {
@@ -70,7 +84,7 @@ const NearbyPets = () => {
           data={nearbyAnimals}
           horizontal
           showsHorizontalScrollIndicator={false}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item: Animal) => item._id}
           renderItem={({ item }) => {
             const isFavorited = favorites.some(fav => fav.id === item._id);
             return (
@@ -80,8 +94,16 @@ const NearbyPets = () => {
               >
                 <View style={styles.imageContainer}>
                   <Image 
-                    source={{uri:`https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${item.images?.[0]}`}} 
-                    style={styles.petImage} 
+                    source={{
+                      uri: `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`,
+                      cache: 'force-cache'
+                    }} 
+                    style={styles.petImage}
+                    onError={(error) => {
+                      console.error('Image loading error for:', item.name);
+                      console.error('Image URL:', `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`);
+                      console.error('Error details:', error.nativeEvent);
+                    }}
                   />
                   <TouchableOpacity 
                     style={styles.favoriteIcon} 
