@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { removeToken } from '../../utils/authStorage';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const navigationItems = [
   {
@@ -38,8 +38,21 @@ const navigationItems = [
 ];
 
 const BottomNavigation = () => {
-  const [activeTab, setActiveTab] = React.useState('home');
+  const route = useRoute();
   const navigation = useNavigation();
+  
+  // Set initial active tab based on current route
+  const [activeTab, setActiveTab] = React.useState(() => {
+    switch (route.name) {
+      case 'Dashboard':
+        return 'home';
+      case 'Favorites':
+        return 'favorites';
+      // Add other cases as needed
+      default:
+        return 'home';
+    }
+  });
 
   const handleTabPress = async (tabId: string) => {
     if (tabId === 'account') {
@@ -50,11 +63,27 @@ const BottomNavigation = () => {
       });
     } else if (tabId === 'favorites') {
       navigation.navigate('Favorites' as never);
-      setActiveTab(tabId);
+      setActiveTab('favorites');
+    } else if (tabId === 'home') {
+      navigation.navigate('Dashboard' as never);
+      setActiveTab('home');
     } else {
       setActiveTab(tabId);
     }
   };
+
+  // Update active tab when route changes
+  React.useEffect(() => {
+    switch (route.name) {
+      case 'Dashboard':
+        setActiveTab('home');
+        break;
+      case 'Favorites':
+        setActiveTab('favorites');
+        break;
+      // Add other cases as needed
+    }
+  }, [route.name]);
 
   return (
     <View style={styles.container}>

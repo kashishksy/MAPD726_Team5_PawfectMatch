@@ -1,28 +1,42 @@
 import React from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { toggleFavorite } from '../../redux/slices/favoritesSlice';
+import { RootState } from '../../redux/types';
 
 const NearbyPets = () => {
   const navigation = useNavigation();
-  const { animals, loading, error } = useSelector((state: any) => state.animals);
+  const dispatch = useDispatch();
+  const { animals, loading, error } = useSelector((state: RootState) => state.animals);
+  const favorites = useSelector((state: RootState) => state.favorites.items);
 
-  // Sort animals by distance (kms)
+  // Sort and filter animals by distance
   const nearbyAnimals = [...animals]
-    .filter(animal => animal.kms !== null && animal.kms !== undefined) // Filter out animals without distance
-    .sort((a, b) => (a.kms || 0) - (b.kms || 0)) // Sort by distance
-    .slice(0, 5); // Take only the first 5
+    .filter(animal => animal.kms !== null && animal.kms !== undefined)
+    .sort((a, b) => (a.kms || 0) - (b.kms || 0))
+    .slice(0, 5);
+
+  const handleToggleFavorite = (pet: any) => {
+    dispatch(toggleFavorite({
+      id: pet._id,
+      title: pet.name,
+      description: pet.breedType?.name || 'Unknown breed',
+      images: pet.images,
+      name: pet.name,
+      breedType: pet.breedType,
+      kms: pet.kms
+    }));
+  };
 
   const handleViewAll = () => {
-    // navigation.navigate('PetList', { filter: 'nearby' });
+    //navigation.navigate('NearbyPets');
   };
 
   const handlePetPress = (petId: string) => {
     // navigation.navigate('PetDetails', { id: petId });
   };
-
-  
-  
 
   if (loading) {
     return (
@@ -57,23 +71,37 @@ const NearbyPets = () => {
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => item._id}
-          renderItem={({ item }) => (
-            <TouchableOpacity 
-              style={styles.petCard}
-              onPress={() => handlePetPress(item._id)}
-            >
-              <Image 
-                     source={{uri:`https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${item.images?.[0]}`}} 
-                  style={styles.petImage} 
-                />
-
-              <View style={styles.petInfo}>
-                <Text style={styles.petName}>{item.name}</Text>
-                <Text style={styles.petBreed}>{item.breedType?.name || 'Unknown breed'}</Text>
-                <Text style={styles.petDistance}>{item.kms?.toFixed(1) || '?'} km away</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+          renderItem={({ item }) => {
+            const isFavorited = favorites.some(fav => fav.id === item._id);
+            return (
+              <TouchableOpacity 
+                style={styles.petCard}
+                onPress={() => handlePetPress(item._id)}
+              >
+                <View style={styles.imageContainer}>
+                  <Image 
+                    source={{uri:`https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${item.images?.[0]}`}} 
+                    style={styles.petImage} 
+                  />
+                  <TouchableOpacity 
+                    style={styles.favoriteIcon} 
+                    onPress={() => handleToggleFavorite(item)}
+                  >
+                    <Ionicons 
+                      name={isFavorited ? 'heart' : 'heart-outline'} 
+                      size={24} 
+                      color={isFavorited ? '#FF6F61' : '#fff'} 
+                    />
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.petInfo}>
+                  <Text style={styles.petName}>{item.name}</Text>
+                  <Text style={styles.petBreed}>{item.breedType?.name || 'Unknown breed'}</Text>
+                  <Text style={styles.petDistance}>{item.kms?.toFixed(1) || '?'} km away</Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
         />
       )}
     </View>
@@ -116,12 +144,23 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginBottom: 10,
   },
+  imageContainer: {
+    position: 'relative',
+  },
   petImage: {
     width: '100%',
     height: 120,
     resizeMode: 'cover',
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
+  },
+  favoriteIcon: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    padding: 6,
+    borderRadius: 20,
   },
   petInfo: {
     padding: 12,
@@ -143,4 +182,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NearbyPets; 
+export default NearbyPets;
