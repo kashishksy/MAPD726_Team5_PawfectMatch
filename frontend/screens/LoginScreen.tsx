@@ -104,17 +104,21 @@ const LoginScreen = ({ navigation }:any) => {
     dispatch(setLoading(true));
 
     try {
+      console.log('Verifying OTP for phone:', phoneNumber);
       const verifyResponse = await api.post('/auth/verify-otp', {
         countryCode: '1',
         mobileNumber: phoneNumber,
         otp,
       });
 
+      console.log('Full OTP verification response:', verifyResponse.data);
+      
       if (verifyResponse.data.error) {
         throw new Error(verifyResponse.data.message);
       }
 
-      const { token, exists, user } = verifyResponse.data.data;
+      const { token, is_register: exists, user } = verifyResponse.data.data;
+      console.log('Extracted data:', { token: !!token, exists, user: !!user });
 
       // Store token using the auth storage utility
       await storeToken(token);
@@ -123,11 +127,14 @@ const LoginScreen = ({ navigation }:any) => {
       dispatch(setPhoneNumber(phoneNumber));
       dispatch(setOtpVerified(true));
 
+      console.log('User exists?', exists);
       if (exists) {
+        console.log('Registered user - navigating to Dashboard');
         dispatch(setUserData(user));
         dispatch(setLoggedIn(true));
         navigation.replace('Dashboard');
       } else {
+        console.log('New user - navigating to UserType');
         dispatch(setIsNewUser(true));
         navigation.navigate('UserType');
       }
