@@ -12,8 +12,8 @@ const favoriteRoutes = require('./src/routes/favoriteRoutes');
 // const chatRoutes = require('./src/routes/chatRoutes');
 const errorHandler = require('./src/middleware/errorHandler');
 
-const Chat = require('./src/models/chatModel');
-const Message = require('./src/models/messageModel');
+// const Chat = require('./src/models/chatModel');
+// const Message = require('./src/models/messageModel');
 
 const app = express();
 const server = http.createServer(app);
@@ -22,29 +22,29 @@ const io = socketIo(server);
 // Connect to MongoDB
 connectDB();
 
-io.on('connection', (socket) => {
-    console.log('New user connected:', socket.id);
+// io.on('connection', (socket) => {
+//     console.log('New user connected:', socket.id);
 
-    socket.on('joinChat', ({ chatId }) => {
-        socket.join(chatId);
-        console.log(`User joined chat: ${chatId}`);
-    });
+//     socket.on('joinChat', ({ chatId }) => {
+//         socket.join(chatId);
+//         console.log(`User joined chat: ${chatId}`);
+//     });
 
-    socket.on('sendMessage', async ({ chatId, senderId, message }) => {
-        try {
-            const newMessage = new Message({ chatId, sender: senderId, message });
-            await newMessage.save();
+//     socket.on('sendMessage', async ({ chatId, senderId, message }) => {
+//         try {
+//             const newMessage = new Message({ chatId, sender: senderId, message });
+//             await newMessage.save();
 
-            io.to(chatId).emit('newMessage', newMessage); // Emit to all users in chat
-        } catch (error) {
-            console.error("Error sending message:", error);
-        }
-    });
+//             io.to(chatId).emit('newMessage', newMessage); // Emit to all users in chat
+//         } catch (error) {
+//             console.error("Error sending message:", error);
+//         }
+//     });
 
-    socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
-    });
-});
+//     socket.on('disconnect', () => {
+//         console.log('User disconnected:', socket.id);
+//     });
+// });
 
 // Middleware
 app.use(express.json());
