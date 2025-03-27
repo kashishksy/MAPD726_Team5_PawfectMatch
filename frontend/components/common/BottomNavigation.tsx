@@ -56,11 +56,8 @@ const BottomNavigation = () => {
 
   const handleTabPress = async (tabId: string) => {
     if (tabId === 'account') {
-      await removeToken();
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Login' as never }],
-      });
+      navigation.navigate('Account' as never);
+      setActiveTab('account');
     } else if (tabId === 'favorites') {
       navigation.navigate('Favorites' as never);
       setActiveTab('favorites');
@@ -96,7 +93,7 @@ const BottomNavigation = () => {
           <Ionicons
             name={activeTab === item.id ? item.activeIcon : item.icon}
             size={24}
-            color={activeTab === item.id ? '#F4A460' : '#666666'}
+            color={activeTab === item.id ? '#FF6F61' : '#666666'}
           />
           <Text
             style={[
