@@ -22,8 +22,13 @@ import TermsScreen from '../screens/TermsScreen';
 import OwnerOrganizationDetailsScreen from '../screens/OwnerOrganizationDetailsScreen';
 import CatPawLoader from "../components/CatPawLoader";
 import Favorites from '../screens/Favorites';
+import AccountScreen from '../screens/AccountScreen';
 import PetListScreen from "../screens/PetListScreen";
 import PetDetailsScreen from "../screens/PetDetailsScreen";
+import FAQScreen from '../screens/FAQScreen';
+import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
+import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
+import HelpSupportScreen from '../screens/HelpSupportScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -77,8 +82,13 @@ const AppNavigator = () => {
         <Stack.Screen name="OwnerOrganizationDetails" component={OwnerOrganizationDetailsScreen} />
         <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
         <Stack.Screen name="Favorites" component={Favorites} />
+        <Stack.Screen name="Account" component={AccountScreen} />
         <Stack.Screen name="PetListScreen" component={PetListScreen} />
         <Stack.Screen name="PetDetails" component={PetDetailsScreen} />
+        <Stack.Screen name="FAQ" component={FAQScreen} />
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
+        <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
+        <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
