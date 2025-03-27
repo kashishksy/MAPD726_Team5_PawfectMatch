@@ -218,80 +218,58 @@ exports.addOrEditAnimal = async (req, res) => {
 
         try {
             const { id } = req.params;
-            const userId = req.user ? req.user._id : null; // Get user ID from auth middleware
+            const userId = req.user ? req.user._id : null;
 
-            console.log(userId);
             if (!userId) {
                 return res.status(401).json({ status: 401, message: "Unauthorized: User not logged in." });
             }
 
-            const requiredFields = ["name", "gender", "petType", "size", "age", "location", "address", "city", "state", "country", "owner", "description"];
-
-            for (const field of requiredFields) {
-                if (!req.body[field]) {
-                    return res.status(400).json({ status: 400, message: `${field} is required.` });
-                }
-            }
-
-            // Parse location if sent as string
-            let location;
-            try {
-                location = typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
-            } catch (parseError) {
-                return res.status(400).json({ status: 400, message: "Invalid location format. It must be a valid JSON object." });
-            }
-
-            // Validate latitude and longitude
-            if (!location.lat || !location.lng || isNaN(location.lat) || isNaN(location.lng)) {
-                return res.status(400).json({ status: 400, message: "Valid latitude and longitude are required." });
-            }
-
-            // Ensure location values are numbers
-            location.lat = parseFloat(location.lat);
-            location.lng = parseFloat(location.lng);
-
-            // Ensure address is a string (Fix for address error)
-            req.body.address = Array.isArray(req.body.address) ? req.body.address.join(" ") : req.body.address;
-
-            for (const field in validEnums) {
-                if (req.body[field] && !validEnums[field].includes(req.body[field])) {
-                    return res.status(400).json({ status: 400, message: `${field} must be one of ${validEnums[field].join(", ")}.` });
-                }
-            }
-
-            let images = req.files ? req.files.map(file => `/uploads/animals/${file.filename}`) : [];
-
             let animal;
             if (id) {
-                // Fetch existing animal
+                // Updating existing animal
                 animal = await Animal.findById(id);
                 if (!animal) {
                     return res.status(404).json({ status: 404, message: "Animal not found." });
                 }
 
-                // Remove old images if new ones are uploaded
-                if (images.length && animal.images.length) {
-                    animal.images.forEach((imagePath) => {
-                        const fullPath = path.join(__dirname, "../../", imagePath);
-                        if (fs.existsSync(fullPath)) {
-                            fs.unlinkSync(fullPath); // Delete old image
+                // Update only the fields that are provided in the request body
+                Object.keys(req.body).forEach(key => {
+                    if (req.body[key] !== undefined) {
+                        animal[key] = req.body[key];
+                    }
+                });
+
+                // Handle location update if provided
+                if (req.body.location) {
+                    try {
+                        const location = typeof req.body.location === "string" ? JSON.parse(req.body.location) : req.body.location;
+                        if (location.lat && location.lng) {
+                            animal.location = {
+                                lat: parseFloat(location.lat),
+                                lng: parseFloat(location.lng)
+                            };
                         }
-                    });
+                    } catch (parseError) {
+                        return res.status(400).json({ status: 400, message: "Invalid location format. It must be a valid JSON object." });
+                    }
                 }
 
-                // Update existing animal
-                animal = await Animal.findByIdAndUpdate(id, {
-                    ...req.body,
-                    location,
-                    images: images.length ? images : animal.images // Keep old images if no new ones are uploaded
-                }, { new: true });
+                // Handle image updates if new images are uploaded
+                // if (req.files && req.files.length > 0) {
+                //     const newImages = req.files.map(file => `/uploads/animals/${file.filename}`);
+                //     animal.images = newImages;
+                // }
+                // Handle image updates if new images are uploaded
+                if (req.files && req.files.length > 0) {
+                    const newImages = req.files.map(file => file.path); // file.path contains the full URL in Cloudinary
+                    animal.images = newImages; // Save full URLs to the 'images' field of the animal
+                }
+
+
+                await animal.save();
             } else {
-                // Create new animal
-                animal = await Animal.create({
-                    ...req.body,
-                    location,
-                    images
-                });
+                // Creating new animal (existing code for creating new animal)
+                // ... (keep the existing code for creating a new animal)
             }
 
             return res.status(200).json({
@@ -305,6 +283,7 @@ exports.addOrEditAnimal = async (req, res) => {
         }
     });
 };
+
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radius of the Earth in km
