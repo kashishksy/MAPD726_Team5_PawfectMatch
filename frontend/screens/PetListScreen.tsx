@@ -157,7 +157,7 @@ const PetListScreen = ({ navigation, route }: any) => {
       >
         <View style={styles.imageContainer}>
           <Image 
-            source={{ uri: `https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${item.images?.[0]}`}} 
+            source={{ uri: `${item.images?.[0]}`}} 
             style={styles.petImage} 
           />
           <TouchableOpacity 

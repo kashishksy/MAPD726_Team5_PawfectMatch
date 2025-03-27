@@ -29,7 +29,7 @@ const NearbyPets = () => {
   console.log('Nearby Animals:', nearbyAnimals.map(animal => ({
     id: animal._id,
     name: animal.name,
-    imageUrl: animal.images?.[0] ? `https://res.cloudinary.com/dkcerk04u/image/upload/${animal.images[0]}` : 'No image'
+    imageUrl: animal.images?.[0] ? `${animal.images[0]}` : 'No image'
   })));
 
   const handleToggleFavorite = (pet: Animal) => {
@@ -95,13 +95,13 @@ const NearbyPets = () => {
                 <View style={styles.imageContainer}>
                   <Image 
                     source={{
-                      uri: `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`,
+                      uri: `${item.images[0]}`,
                       cache: 'force-cache'
                     }} 
                     style={styles.petImage}
                     onError={(error) => {
                       console.error('Image loading error for:', item.name);
-                      // console.error('Image URL:', `https://res.cloudinary.com/dkcerk04u/image/upload/${item.images[0]}`);
+                      // console.error('Image URL:', `${item.images[0]}`);
                       // console.error('Error details:', error.nativeEvent);
                     }}
                   />

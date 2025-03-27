@@ -81,7 +81,7 @@ const PetDetailsScreen = ({ route, navigation }) => {
         <View style={styles.imageContainer}>
           {pet?.images && (
             <Image
-              source={{ uri: `https://res.cloudinary.com/dkcerk04u/image/upload/v1741239639/${pet.images[currentImageIndex]}` }}
+              source={{  uri: `${pet.images[0]}`, }}
               style={styles.petImage}
             />
           )}
