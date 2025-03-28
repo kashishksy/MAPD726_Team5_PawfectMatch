@@ -1,10 +1,10 @@
 //@ts-check
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { toggleFavorite } from '../../redux/slices/favoritesSlice';
+import { toggleFavorite, setFavorites, loadFavoritesFromStorage } from '../../redux/slices/favoritesSlice';
 import { RootState } from '../../redux/types';
 import type { Animal } from '../../redux/slices/animalsSlice';
 
@@ -19,6 +19,15 @@ const NearbyPets = () => {
   const dispatch = useDispatch();
   const { animals, loading, error } = useSelector((state: RootState) => state.animals);
   const favorites = useSelector((state: RootState) => state.favorites.items);
+
+  // Load favorites from AsyncStorage when component mounts
+  useEffect(() => {
+    const loadFavorites = async () => {
+      const storedFavorites = await loadFavoritesFromStorage();
+      dispatch(setFavorites(storedFavorites));
+    };
+    loadFavorites();
+  }, [dispatch]);
 
   // Sort and filter animals by distance
   const nearbyAnimals = animals

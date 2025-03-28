@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface FavoriteItem {
   id: string;
@@ -11,7 +12,6 @@ interface FavoriteItem {
     name: string;
   };
   kms?: number;
-  // Add any other fields you need
 }
 
 interface FavoritesState {
@@ -20,6 +20,26 @@ interface FavoritesState {
 
 const initialState: FavoritesState = {
   items: [],
+};
+
+// Helper function to save favorites to AsyncStorage
+export const saveFavoritesToStorage = async (favorites: FavoriteItem[]) => {
+  try {
+    await AsyncStorage.setItem('favorites', JSON.stringify(favorites));
+  } catch (error) {
+    console.error('Error saving favorites:', error);
+  }
+};
+
+// Helper function to load favorites from AsyncStorage
+export const loadFavoritesFromStorage = async () => {
+  try {
+    const favoritesString = await AsyncStorage.getItem('favorites');
+    return favoritesString ? JSON.parse(favoritesString) : [];
+  } catch (error) {
+    console.error('Error loading favorites:', error);
+    return [];
+  }
 };
 
 const favoritesSlice = createSlice({
@@ -32,15 +52,18 @@ const favoritesSlice = createSlice({
       );
       
       if (existingIndex >= 0) {
-        // Remove from favorites if already exists
         state.items.splice(existingIndex, 1);
       } else {
-        // Add to favorites if doesn't exist
         state.items.push(action.payload);
       }
+      // Save to AsyncStorage whenever favorites change
+      saveFavoritesToStorage(state.items);
+    },
+    setFavorites: (state, action: PayloadAction<FavoriteItem[]>) => {
+      state.items = action.payload;
     },
   },
 });
 
-export const { toggleFavorite } = favoritesSlice.actions;
+export const { toggleFavorite, setFavorites } = favoritesSlice.actions;
 export default favoritesSlice.reducer;
