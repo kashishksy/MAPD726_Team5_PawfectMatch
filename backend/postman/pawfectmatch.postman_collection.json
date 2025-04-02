@@ -24,14 +24,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/send-otp",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/send-otp",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"auth",
 								"send-otp"
 							]
@@ -111,7 +108,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\",\r\n    \"otp\" :\"701353\"\r\n}\r\n",
+							"raw": "{\r\n    \"countryCode\": \"91\",\r\n    \"mobileNumber\": \"8140714725\",\r\n    \"otp\" :\"727087\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -119,14 +116,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/verify-otp",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/verify-otp",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"auth",
 								"verify-otp"
 							]
@@ -252,14 +246,11 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/register",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/register",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"auth",
 								"register"
 							]
@@ -380,14 +371,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/auth/profile",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/profile",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"auth",
 								"profile"
 							]
@@ -501,14 +489,11 @@
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/auth/profile/update",
-							"protocol": "http",
+							"raw": "{{base_url}}/auth/profile/update",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"auth",
 								"profile",
 								"update"
@@ -540,14 +525,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/pets",
-							"protocol": "http",
+							"raw": "{{base_url}}/pets",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"pets"
 							]
 						}
@@ -629,14 +611,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/breeds",
-							"protocol": "http",
+							"raw": "{{base_url}}/breeds",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"breeds"
 							]
 						}
@@ -725,7 +704,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"searchName\": \"Xiasi Dog\",   //animal name\r\n    \"searchLocation\": \"310\",     //address\r\n    \"size\": \"Large\",             //Small, Medium, Large\r\n    \"age\": \"Young\",              //Baby, Young, Adult, Senior\r\n    \"gender\": \"Male\",            //Male, Female\r\n    \"page\": 1,\r\n    \"limit\": 10,\r\n    \"breedType\": \"\",\r\n    \"petType\": \"\"\r\n}",
+							"raw": "{\r\n    \"searchName\": \"\", //animal name\r\n    \"searchLocation\": \"\", //address\r\n    \"size\": \"\", //Small, Medium, Large\r\n    \"age\": \"\", //Baby, Young, Adult, Senior\r\n    \"gender\": \"\", //Male, Female\r\n    \"page\": 1,\r\n    \"limit\": 10,\r\n    \"breedType\": [\"67b796e2608abedbfae25529\"],\r\n    \"petType\": [\"67b796e2608abedbfae2551b\"]\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -733,14 +712,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/animals/search",
-							"protocol": "http",
+							"raw": "{{base_url}}/animals/search",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"animals",
 								"search"
 							]
@@ -772,14 +748,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/animals?limit=10&page=1",
-							"protocol": "http",
+							"raw": "{{base_url}}/animals?limit=10&page=1",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"animals"
 							],
 							"query": [
@@ -815,16 +788,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/animals/67c0c28e0428d6d493359e3f",
-							"protocol": "http",
+							"raw": "{{base_url}}/animals/67ecf63402b5fc8d8b6e1147",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"animals",
-								"67c0c28e0428d6d493359e3f"
+								"67ecf63402b5fc8d8b6e1147"
 							]
 						}
 					},
@@ -846,7 +816,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{ \"animalId\": \"67bc1a81e43500fa1454bd32\" }\r\n",
+							"raw": "{\r\n  \"animalIds\": [\"67ecf63402b5fc8d8b6e1147\",\"67e5817fff60d6f0a0557448\",\"67e5809eff60d6f0a0557445\"]\r\n}\r\n\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -854,14 +824,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/favorite-animal",
-							"protocol": "http",
+							"raw": "{{base_url}}/favorite-animal",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"favorite-animal"
 							],
 							"query": [
@@ -887,14 +854,11 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/favorite-animals",
-							"protocol": "http",
+							"raw": "{{base_url}}/favorite-animals",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"favorite-animals"
 							]
 						}
@@ -922,12 +886,12 @@
 							"formdata": [
 								{
 									"key": "name",
-									"value": "Bella",
+									"value": "test",
 									"type": "text"
 								},
 								{
 									"key": "gender",
-									"value": "Male",
+									"value": "Female",
 									"description": "[\"Male\", \"Female\"]",
 									"type": "text"
 								},
@@ -943,7 +907,7 @@
 								},
 								{
 									"key": "size",
-									"value": "Small",
+									"value": "Medium",
 									"description": "[\"Small\", \"Medium\", \"Large\"]",
 									"type": "text"
 								},
@@ -955,58 +919,49 @@
 								},
 								{
 									"key": "location",
-									"value": "{  \"lat\": \"88.0266\",  \"lng\": \"155.1961\"}",
+									"value": "{ \"lat\": 43.4532, \"lng\": 79.1432 }",
 									"type": "text"
 								},
 								{
 									"key": "address",
-									"value": "67764 Casimir",
+									"value": "128 Maple Street",
 									"type": "text"
 								},
 								{
 									"key": "city",
-									"value": "1",
+									"value": "Toronto",
 									"type": "text"
 								},
 								{
 									"key": "state",
-									"value": "1",
+									"value": "Ontario",
 									"type": "text"
 								},
 								{
 									"key": "country",
-									"value": "1",
-									"type": "text"
-								},
-								{
-									"key": "owner",
-									"value": "0",
+									"value": "Canada",
 									"type": "text"
 								},
 								{
 									"key": "description",
-									"value": "1",
+									"value": "<p>Friendly and energetic Golden Retriever puppy looking for an active family. Great with children and loves to play fetch.</p><p>Luna enjoys outdoor activities and is always ready for an adventure. She thrives in environments where she can run and play, making her the perfect companion for families who love to spend time outdoors.</p><p>With her affectionate nature and playful spirit, Luna is sure to bring joy and laughter to her new home. She is eager to learn and would benefit from training to help her become the best dog she can be.</p>",
 									"type": "text"
 								},
 								{
 									"key": "images",
 									"type": "file",
-									"src": "/C:/Users/TechHive-01/Downloads/john.jpg",
-									"disabled": true
+									"src": []
 								}
 							]
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/animal/67da9db390bce7fe758a9461",
-							"protocol": "http",
+							"raw": "{{base_url}}/animal/67ecf63402b5fc8d8b6e1147",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
 								"animal",
-								"67da9db390bce7fe758a9461"
+								"67ecf63402b5fc8d8b6e1147"
 							]
 						}
 					},
@@ -1018,7 +973,7 @@
 			"name": "Chat",
 			"item": [
 				{
-					"name": "chat/start",
+					"name": "create",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1030,7 +985,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"recipientId\":\"123\"\r\n}",
+							"raw": "{\r\n  \"userId1\": \"67c0d27917f61662bb8e7e96\",\r\n  \"userId2\": \"67b79606b7339564e6eb4ecf\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1038,23 +993,20 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/chat/start",
-							"protocol": "http",
+							"raw": "{{base_url}}/chats/create",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"chat",
-								"start"
+								"chats",
+								"create"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "chat/send",
+					"name": "send",
 					"request": {
 						"method": "POST",
 						"header": [
@@ -1066,7 +1018,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"chatId\":\"67c197ff21fa29a0d0b20332\",\r\n    \"message\" : \"Hiiii\"\r\n}",
+							"raw": "{\r\n  \"chatId\": \"67ed276f5a6d6878cb3fdf98\",\r\n  \"sender\": \"67c0d27917f61662bb8e7e96\",\r\n  \"message\": \"Hello Jane, I’m interested in adopting your pet.\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1074,15 +1026,12 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:5000/api/chat/send",
-							"protocol": "http",
+							"raw": "{{base_url}}/chats/send",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"chat",
+								"chats",
 								"send"
 							]
 						}
@@ -1090,7 +1039,7 @@
 					"response": []
 				},
 				{
-					"name": "chat/chats",
+					"name": "chats",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1101,23 +1050,20 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/chat/chats",
-							"protocol": "http",
+							"raw": "{{base_url}}/chats/67b79606b7339564e6eb4ecf",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"chat",
-								"chats"
+								"chats",
+								"67b79606b7339564e6eb4ecf"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "chat/messages",
+					"name": "messages",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -1128,17 +1074,14 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:5000/api/chat/messages/67c197ff21fa29a0d0b20332",
-							"protocol": "http",
+							"raw": "{{base_url}}/chats/messages/67ed276f5a6d6878cb3fdf98",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "5000",
 							"path": [
-								"api",
-								"chat",
+								"chats",
 								"messages",
-								"67c197ff21fa29a0d0b20332"
+								"67ed276f5a6d6878cb3fdf98"
 							]
 						}
 					},
@@ -1172,7 +1115,12 @@
 	"variable": [
 		{
 			"key": "token",
-			"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2MwZDI3OTE3ZjYxNjYyYmI4ZTdlOTYiLCJtb2JpbGVOdW1iZXIiOiI4MTQwNzE0NzI1IiwiaWF0IjoxNzQyMzY3NDM5LCJleHAiOjE3NDI5NzIyMzl9.EC20EPxW6HtoP-Ay0jQ668YURWhaNbvdlMbvYU8CpPewY7XKhVmjKV9mNh2wZTMwhNawx0FC6aL3CoquyJCU2HFt1sk4JePhSkMHBzFDk0ORyx3_8XZgXyHHVO4glnjcO-Q3KJgGEG0gjzwViOjNcaAhIqX8AIYgcs0i5zoLqtoCJqZWczwKnmaxoJRDWFOt1NhtgJ61gTrgIHd6hWlvyDcYObrjqKitXTHfXrmsxnjsuK9Vol5ssu8D6bGAyn7AXQmb4ka552Rm0vbJouJkW0gjBGcbD8wKSIY_6I2_XNInaLtBEKgLMNS4mWhiFILAbQhpFG9YiKkpKF6S-4WC3g",
+			"value": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2MwZDI3OTE3ZjYxNjYyYmI4ZTdlOTYiLCJtb2JpbGVOdW1iZXIiOiI4MTQwNzE0NzI1IiwiaWF0IjoxNzQzNTA5MDU1LCJleHAiOjE3NDQxMTM4NTV9.GXpBLNkuW0k-8Ar91DiLkQnRmD21GzOnIb1DqgZYQQyErpLu0IgJI8ePP93_-L4hv8k5nxlxNeFiReFjAeISUPxXcP-pHTJu9XkMRsMTuur9DJD377dJr-14Uhol_WIGrRHZrqE9G_ygJjOo3bZUfSNAfDPXDnTTmo8K2qjAyNOu5Hc8wC--O46j61yiGd_ncQxzC2tndbD-a5-HFN56EjaTyhECRW53qZpWzEpFYljaiohyxGyNLOO4ClwxL_i_E_jcK5K5vnaEmODjPIt4ILeQdWxkDEap-7kkDwM6CZ3BLDnBn-yuYW07mcDI6FZkLYD-cBIaOFWOFcnE9esaPA",
+			"type": "string"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api",
 			"type": "string"
 		}
 	]

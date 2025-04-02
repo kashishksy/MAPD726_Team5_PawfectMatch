@@ -1,8 +1,9 @@
 require('dotenv').config();
 const express = require('express');
-const connectDB = require('./src/config/db'); // Import database connection
+const connectDB = require('./src/config/db');
+const cors = require("cors");
 const http = require('http');
-const socketIo = require('socket.io');
+const { Server } = require('socket.io');
 
 const authRoutes = require('./src/routes/authRoutes');
 const petRoutes = require('./src/routes/petRoutes');
@@ -14,52 +15,58 @@ const errorHandler = require('./src/middleware/errorHandler');
 
 const Chat = require('./src/models/chatModel');
 const Message = require('./src/models/messageModel');
+const User = require('./src/models/userModel');
 
 const app = express();
 const server = http.createServer(app);
-const io = socketIo(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
-// Connect to MongoDB
 connectDB();
 
-io.on('connection', (socket) => {
-    console.log('New user connected:', socket.id);
+// Store online users
+const onlineUsers = new Map();
 
-    socket.on('joinChat', ({ chatId }) => {
+io.on("connection", (socket) => {
+    console.log("User connected:", socket.id);
+
+    socket.on("joinChat", (chatId) => {
         socket.join(chatId);
         console.log(`User joined chat: ${chatId}`);
     });
 
-    socket.on('sendMessage', async ({ chatId, senderId, message }) => {
-        try {
-            const newMessage = new Message({ chatId, sender: senderId, message });
-            await newMessage.save();
+    socket.on("sendMessage", async (data) => {
+        const { chatId, sender, message } = data;
+        const newMessage = new Message({ chatId, sender, message });
 
-            io.to(chatId).emit('newMessage', newMessage); // Emit to all users in chat
-        } catch (error) {
-            console.error("Error sending message:", error);
-        }
+        await newMessage.save();
+        await Chat.findByIdAndUpdate(chatId, { lastMessage: message, lastMessageTime: Date.now() });
+
+        io.to(chatId).emit("newMessage", newMessage);
     });
 
-    socket.on('disconnect', () => {
-        console.log('User disconnected:', socket.id);
+    socket.on("disconnect", () => {
+        console.log("User disconnected:", socket.id);
     });
 });
 
 // Middleware
 app.use(express.json());
-app.use('/uploads', express.static('uploads')); // Serve profile images
-
+app.use('/uploads', express.static('uploads'));
+app.use(cors());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', petRoutes);
 app.use('/api', breedRoutes);
 app.use('/api', animalRoutes);
 app.use('/api', favoriteRoutes);
-app.use('/api/chat', chatRoutes);
+app.use('/api/chats', chatRoutes);
 
-// Error handling middleware
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`)); // Use `server.listen` for WebSocket support
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
