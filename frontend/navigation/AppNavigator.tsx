@@ -31,6 +31,7 @@ import FAQScreen from '../screens/FAQScreen';
 import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
 import HelpSupportScreen from '../screens/HelpSupportScreen';
+import MapScreen from "../screens/MapScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -93,6 +94,7 @@ const AppNavigator = () => {
         <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
         <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
         <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
+        <Stack.Screen name="MapScreen" component={MapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
