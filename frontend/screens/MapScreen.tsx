@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Image, Modal } from 'react-native';
-import MapView, { Circle, Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, StyleSheet, Text, TouchableOpacity, Image, Modal, Platform } from 'react-native';
+import MapView, { Circle, Marker, Callout, PROVIDER_GOOGLE, PROVIDER_DEFAULT } from 'react-native-maps';
 import { NavigationProp } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomNavigation from '../components/common/BottomNavigation';
@@ -29,6 +29,9 @@ const MapScreen = ({ navigation }: MapScreenProps) => {
     setRadius(selectedRadius);
     setShowRadiusModal(false);
   };
+ 
+  // Determine the map provider based on platform
+  const mapProvider = Platform.OS === 'ios' ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
  
   return (
     <View style={styles.container}>
@@ -89,30 +92,42 @@ const MapScreen = ({ navigation }: MapScreenProps) => {
  
       {/* Map View */}
       <MapView
-        provider={PROVIDER_GOOGLE}
+        provider={mapProvider}
         style={styles.map}
         initialRegion={initialRegion}
+        showsUserLocation={true}
+        showsMyLocationButton={true}
+        showsCompass={true}
+        showsScale={true}
       >
-        <Circle
-          center={initialRegion}
-          radius={radius * 1000} // Convert km to meters
-          fillColor="rgba(235, 49, 12, 0.2)"
-          strokeColor="#FF6F61"
-          strokeWidth={1}
-        />
+        {Platform.OS === 'ios' ? (
+          <Circle
+            center={initialRegion}
+            radius={radius * 1000}
+            fillColor="rgba(235, 49, 12, 0.2)"
+            strokeColor="#FF6F61"
+            strokeWidth={1}
+          />
+        ) : (
+          <Circle
+            center={initialRegion}
+            radius={radius * 1000}
+            fillColor="rgba(235, 49, 12, 0.2)"
+            strokeColor="#FF6F61"
+            strokeWidth={1}
+          />
+        )}
         {animals.map((pet: any) => (
           <Marker
             key={pet._id}
             coordinate={{ latitude: pet.location.lat, longitude: pet.location.lng }}
             title={pet.name}  
             onCalloutPress={() => navigation.navigate('PetDetails', { petId: pet._id })}
-            style={{ width: 40, height: 40, borderRadius: 25}}
           >
             <Image
               source={{ uri: pet.images[0] }}
-              style={{ width: 40, height: 40, borderRadius: 25, borderColor: '#FF6F61', borderWidth: 2 }}
+              style={{ width: 40, height: 40, borderRadius: 20, borderColor: '#FF6F61', borderWidth: 2 }}
             />
-    
           </Marker>
         ))}
       </MapView>
