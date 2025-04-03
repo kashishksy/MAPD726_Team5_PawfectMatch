@@ -22,7 +22,7 @@ import { fetchAnimalsStart, fetchAnimalsSuccess, fetchAnimalsFailure } from '../
 const PetListScreen = ({ navigation, route }: any) => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(route.params?.category || 'Cats');
+  const [selectedCategory, setSelectedCategory] = useState(route.params?.petType || 'Dogs');
   const dispatch = useDispatch();
 
   // Get data from Redux store
@@ -86,7 +86,7 @@ const PetListScreen = ({ navigation, route }: any) => {
       }));
       
       // Apply initial filtering
-      filterAnimalsByPetType('');
+      filterAnimalsByPetType(route.params?.petType || selectedCategory);
     } catch (error) {
       console.error('Error fetching animals:', error);
       dispatch(fetchAnimalsFailure('Failed to fetch animals'));
@@ -372,4 +372,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PetListScreen; 
+export default PetListScreen;

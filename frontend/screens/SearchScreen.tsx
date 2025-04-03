@@ -56,12 +56,12 @@ const SearchScreen = ({ navigation }: any) => {
         ) : (
           petTypes.map((pet) => (
             <TouchableOpacity
-              key={pet._id}
+              key={pet.name}
               style={[
                 styles.petOption,
-                petType === pet._id && styles.selectedPetOption
+                petType === pet.name && styles.selectedPetOption
               ]}
-              onPress={() => setPetType(pet._id)}
+              onPress={() => setPetType(pet.name)}
             >
               <Text style={[styles.emoji, petType === pet._id && styles.selectedText]}>{pet.emoji}</Text>
               <Text style={[styles.petName, petType === pet._id && styles.selectedText]}>{pet.name}</Text>

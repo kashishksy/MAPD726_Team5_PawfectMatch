@@ -112,7 +112,7 @@ const DashboardScreen = ({ navigation }: any) => {
       <Header navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <AdoptionBanner />
-        <PetCategories />
+        <PetCategories navigation={navigation} />
         <NearbyPets />
         <PreferencePets />
       </ScrollView>

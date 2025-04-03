@@ -18,7 +18,11 @@ import CatPawLoader from '../components/CatPawLoader';
 
 const { width } = Dimensions.get('window');
 
-const PetDetailsScreen = ({ route, navigation }) => {
+const stripHtmlTags = (html: string) => {
+  return html.replace(/<[^>]*>/g, '');
+};
+
+const PetDetailsScreen = ({ route, navigation }: any) => {
   const [pet, setPet] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -36,6 +40,7 @@ const PetDetailsScreen = ({ route, navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
+      console.log('Pet details response:', response.data.data);
       setPet(response.data.data);
       setIsFavorite(response.data.data.isFavorite || false);
     } catch (error) {
@@ -81,7 +86,7 @@ const PetDetailsScreen = ({ route, navigation }) => {
         <View style={styles.imageContainer}>
           {pet?.images && (
             <Image
-              source={{  uri: `${pet.images[0]}`, }}
+              source={{ uri: `${pet.images[0]}` }}
               style={styles.petImage}
             />
           )}
@@ -127,7 +132,7 @@ const PetDetailsScreen = ({ route, navigation }) => {
               <Ionicons name="home-outline" size={24} color="#FF9D42" />
             </View>
             <View style={styles.shelterInfo}>
-              <Text style={styles.shelterName}>{pet?.organizationName || 'Happy Tails Animal Rescue'}</Text>
+              <Text style={styles.shelterName}>{pet?.owner.fullName || 'Happy Tails Animal Rescue'}</Text>
               <Text style={styles.shelterAddress}>{pet?.city}, {pet?.state}</Text>
             </View>
             <TouchableOpacity style={styles.directionButton}>
@@ -138,7 +143,7 @@ const PetDetailsScreen = ({ route, navigation }) => {
           {/* About Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>About {pet?.name}</Text>
-            <Text style={styles.description}>{pet?.description}</Text>
+            <Text style={styles.description}>{stripHtmlTags(pet?.description)}</Text>
           </View>
 
           {/* Personality Traits */}
@@ -337,6 +342,10 @@ const styles = StyleSheet.create({
   },
   adoptButton: {
     flex: 1,
+    backgroundColor: '#FF6F61',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: '#FF6F61',
     borderRadius: 24,
     justifyContent: 'center',

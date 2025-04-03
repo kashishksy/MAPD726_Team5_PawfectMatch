@@ -10,7 +10,7 @@ const PetCategories = ({ navigation }: any) => {
 
   const handleCategoryPress = (petType: string) => {
     // Navigate to pet type specific screen
-    navigation.navigate('PetList', { petType });
+    navigation.navigate('PetListScreen', {petType });
   };
 
   if (loading) {
@@ -36,7 +36,7 @@ const PetCategories = ({ navigation }: any) => {
           <TouchableOpacity 
             key={category._id} 
             style={styles.categoryItem}
-            onPress={() => handleCategoryPress(category._id)}
+            onPress={() => handleCategoryPress(category.name)}
           >
             <View style={[styles.iconContainer, { backgroundColor: colors.card }]}>
               <Text style={styles.emoji}>{category.emoji}</Text>
