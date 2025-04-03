@@ -1,35 +1,53 @@
 const FavoriteAnimal = require('../models/favoriteAnimalModel');
 const Animal = require('../models/animalModel');
 
-exports.toggleFavoriteAnimal = async (req, res) => {
+exports.toggleFavoriteAnimals = async (req, res) => {
     try {
-        const { animalId } = req.body;
-        const userId = req.user.id; // Assuming user ID comes from JWT authentication
+        const { animalIds } = req.body; // Expecting an array of animal IDs
+        const userId = req.user.id; // User ID from JWT authentication
 
-        if (!animalId) {
-            return res.status(400).json({ status: 400, message: "Animal ID is required" });
+        if (!Array.isArray(animalIds) || animalIds.length === 0) {
+            return res.status(400).json({ status: 400, message: "Animal IDs array is required" });
         }
 
-        const animal = await Animal.findById(animalId);
-        if (!animal) {
-            return res.status(404).json({ status: 404, message: "Animal not found" });
+        // Fetch valid animals
+        const animals = await Animal.find({ _id: { $in: animalIds } });
+
+        if (animals.length !== animalIds.length) {
+            return res.status(404).json({ status: 404, message: "One or more animals not found" });
         }
 
-        const existingFavorite = await FavoriteAnimal.findOne({ userId, animalId });
+        // Fetch user's existing favorite animals
+        const existingFavorites = await FavoriteAnimal.find({ userId, animalId: { $in: animalIds } });
 
-        if (existingFavorite) {
-            await FavoriteAnimal.deleteOne({ _id: existingFavorite._id });
-            return res.status(200).json({ status: 200, message: "Animal removed from favorites" });
-        } else {
-            await FavoriteAnimal.create({ userId, animalId });
-            return res.status(201).json({ status: 201, message: "Animal added to favorites" });
+        // Determine which to add and which to remove
+        const existingFavoriteIds = existingFavorites.map(fav => fav.animalId.toString());
+        const toRemove = existingFavorites.map(fav => fav._id);
+        const toAdd = animalIds.filter(id => !existingFavoriteIds.includes(id));
+
+        // Remove existing favorites
+        if (toRemove.length > 0) {
+            await FavoriteAnimal.deleteMany({ _id: { $in: toRemove } });
         }
+
+        // Add new favorites
+        if (toAdd.length > 0) {
+            const favoriteDocs = toAdd.map(animalId => ({ userId, animalId }));
+            await FavoriteAnimal.insertMany(favoriteDocs);
+        }
+
+        return res.status(200).json({
+            status: 200,
+            message: "Favorites updated successfully",
+            added: toAdd,
+            removed: existingFavoriteIds
+        });
+
     } catch (error) {
-        console.error("Error toggling favorite:", error);
+        console.error("Error toggling favorites:", error);
         return res.status(500).json({ status: 500, message: "Internal Server Error" });
     }
 };
-
 
 exports.getFavoriteAnimals = async (req, res) => {
     try {

@@ -13,10 +13,12 @@ import api from '../services/api';
 import { getToken } from '../utils/authStorage';
 import { fetchPetTypesStart, fetchPetTypesSuccess, fetchPetTypesFailure } from '../redux/slices/petTypesSlice';
 import { fetchAnimalsStart, fetchAnimalsSuccess, fetchAnimalsFailure } from '../redux/slices/animalsSlice';
+import { useTheme } from '../context/ThemeContext';
 
 const DashboardScreen = ({ navigation }: any) => {
   const [isLoading, setIsLoading] = useState(true);
   const dispatch = useDispatch();
+  const { colors } = useTheme();
 
   // Accessing the Redux store
   const auth = useSelector((state: any) => state.auth);
@@ -106,7 +108,7 @@ const DashboardScreen = ({ navigation }: any) => {
 
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <Header navigation={navigation} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <AdoptionBanner />
@@ -116,7 +118,9 @@ const DashboardScreen = ({ navigation }: any) => {
       </ScrollView>
       <BottomNavigation />
       {isLoading && (
-        <View style={styles.loaderOverlay}>
+        <View style={[styles.loaderOverlay, { backgroundColor: colors.background === '#FFFFFF' 
+          ? 'rgba(255, 255, 255, 0.8)' 
+          : 'rgba(18, 18, 18, 0.8)' }]}>
           <CatPawLoader />
         </View>
       )}
@@ -127,13 +131,11 @@ const DashboardScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   loaderOverlay: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent background
   },
 });
 

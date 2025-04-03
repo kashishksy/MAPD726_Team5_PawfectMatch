@@ -12,6 +12,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useTheme } from '../context/ThemeContext';
 
 const faqData = [
   {
@@ -46,9 +47,10 @@ interface AccordionItemProps {
   item: FAQItem;
   isActive: boolean;
   onPress: () => void;
+  colors: any;
 }
 
-const AccordionItem = ({ item, isActive, onPress }: AccordionItemProps) => {
+const AccordionItem = ({ item, isActive, onPress, colors }: AccordionItemProps) => {
   const [animation] = useState(new Animated.Value(0));
 
   React.useEffect(() => {
@@ -65,20 +67,20 @@ const AccordionItem = ({ item, isActive, onPress }: AccordionItemProps) => {
   });
 
   return (
-    <View style={styles.accordionItem}>
+    <View style={[styles.accordionItem, { backgroundColor: colors.card }]}>
       <TouchableOpacity 
         style={styles.questionContainer} 
         onPress={onPress}
       >
-        <Text style={styles.question}>{item.question}</Text>
+        <Text style={[styles.question, { color: colors.text }]}>{item.question}</Text>
         <Ionicons 
           name={isActive ? 'chevron-up' : 'chevron-down'} 
           size={24} 
-          color="#666"
+          color={colors.secondaryText} 
         />
       </TouchableOpacity>
       <Animated.View style={[styles.answerContainer, { maxHeight: bodyHeight }]}>
-        <Text style={styles.answer}>{item.answer}</Text>
+        <Text style={[styles.answer, { color: colors.secondaryText }]}>{item.answer}</Text>
       </Animated.View>
     </View>
   );
@@ -87,11 +89,12 @@ const AccordionItem = ({ item, isActive, onPress }: AccordionItemProps) => {
 const FAQScreen = () => {
   const navigation = useNavigation();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.mainContainer}>
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity 
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
@@ -101,7 +104,7 @@ const FAQScreen = () => {
               style={styles.inputIcon} 
             />
           </TouchableOpacity>
-          <Text style={styles.title}>FAQ</Text>
+          <Text style={[styles.title, { color: colors.text }]}>FAQ</Text>
         </View>
 
         <ScrollView style={styles.content}>
@@ -111,6 +114,7 @@ const FAQScreen = () => {
               item={item}
               isActive={activeIndex === index}
               onPress={() => setActiveIndex(activeIndex === index ? null : index)}
+              colors={colors}
             />
           ))}
         </ScrollView>
@@ -123,7 +127,6 @@ const FAQScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   mainContainer: {
     flex: 1,
@@ -133,7 +136,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   backButton: {
     padding: 8,
@@ -147,7 +149,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 12,
-    color: '#333',
   },
   content: {
     flex: 1,
@@ -156,7 +157,6 @@ const styles = StyleSheet.create({
   accordionItem: {
     marginBottom: 16,
     borderRadius: 8,
-    backgroundColor: '#F5F5F5',
     overflow: 'hidden',
   },
   questionContainer: {
@@ -168,7 +168,6 @@ const styles = StyleSheet.create({
   question: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#333',
     flex: 1,
   },
   answerContainer: {
@@ -176,7 +175,6 @@ const styles = StyleSheet.create({
   },
   answer: {
     fontSize: 14,
-    color: '#666',
     padding: 16,
     paddingTop: 0,
   },

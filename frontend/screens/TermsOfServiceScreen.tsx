@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useTheme } from '../context/ThemeContext';
 
 const TermsOfServiceScreen = () => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.mainContainer}>
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity 
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
@@ -27,32 +29,32 @@ const TermsOfServiceScreen = () => {
               style={styles.inputIcon} 
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Terms of Service</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Terms of Service</Text>
         </View>
 
         <ScrollView style={styles.content}>
-          <Text style={styles.sectionTitle}>Acceptance of Terms</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Acceptance of Terms</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             By accessing or using PawfectMatch, you agree to be bound by these Terms of Service and all applicable laws and regulations.
           </Text>
 
-          <Text style={styles.sectionTitle}>User Responsibilities</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>User Responsibilities</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             You are responsible for maintaining the confidentiality of your account, providing accurate information about pets, and conducting all pet adoption activities in good faith.
           </Text>
 
-          <Text style={styles.sectionTitle}>Pet Listings</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Pet Listings</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             All pet listings must be accurate and truthful. You must have the legal right to list a pet for adoption. We reserve the right to remove any listing that violates our policies.
           </Text>
 
-          <Text style={styles.sectionTitle}>Limitation of Liability</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Limitation of Liability</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             PawfectMatch serves as a platform to connect pet owners with potential adopters. We are not responsible for the actions of users or the outcome of any adoption arrangements.
           </Text>
 
-          <Text style={styles.sectionTitle}>Modifications</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Modifications</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             We reserve the right to modify these terms at any time. Continued use of the service after changes constitutes acceptance of the new terms.
           </Text>
         </ScrollView>
@@ -65,7 +67,6 @@ const TermsOfServiceScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   mainContainer: {
     flex: 1,
@@ -75,7 +76,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   backButton: {
     padding: 8,
@@ -89,7 +89,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 12,
-    color: '#333',
   },
   content: {
     flex: 1,
@@ -98,13 +97,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginTop: 24,
     marginBottom: 12,
   },
   text: {
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
 });

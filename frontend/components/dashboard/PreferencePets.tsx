@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import api from '../../services/api';
 import { getToken } from '../../utils/authStorage';
+import { useTheme } from '../../context/ThemeContext';
 
 // Define the navigation param list type
 type RootStackParamList = {
@@ -18,6 +19,7 @@ const PreferencePets = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { userData } = useSelector((state: any) => state.auth);
+  const { colors } = useTheme();
 
   useEffect(() => {
     fetchPreferenceAnimals();
@@ -67,7 +69,7 @@ const PreferencePets = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading recommended pets...</Text>
+        <Text style={{ color: colors.text }}>Loading recommended pets...</Text>
       </View>
     );
   }
@@ -75,7 +77,7 @@ const PreferencePets = () => {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text>Error loading recommended pets: {error}</Text>
+        <Text style={{ color: colors.text }}>Error loading recommended pets: {error}</Text>
       </View>
     );
   }
@@ -83,14 +85,16 @@ const PreferencePets = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Based on Your Preferences</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Based on Your Preferences</Text>
         <TouchableOpacity onPress={handleViewAll}>
-          <Text style={styles.viewAll}>View All</Text>
+          <Text style={[styles.viewAll, { color: colors.primary }]}>View All</Text>
         </TouchableOpacity>
       </View>
 
       {preferenceAnimals.length === 0 ? (
-        <Text style={styles.emptyText}>No matching pets found based on your preferences</Text>
+        <Text style={[styles.emptyText, { color: colors.secondaryText }]}>
+          No matching pets found based on your preferences
+        </Text>
       ) : (
         <FlatList
           data={preferenceAnimals}
@@ -99,17 +103,21 @@ const PreferencePets = () => {
           keyExtractor={(item: any) => item._id}
           renderItem={({ item }) => (
             <TouchableOpacity 
-              style={styles.petCard}
-                onPress={() => handlePetPress(item._id)}
+              style={[styles.petCard, { backgroundColor: colors.card, shadowColor: colors.text }]}
+              onPress={() => handlePetPress(item._id)}
             >
               <Image 
                 source={{ uri: `${item.images?.[0]}` }} 
                 style={styles.petImage} 
               />
               <View style={styles.petInfo}>
-                <Text style={styles.petName}>{item.name}</Text>
-                <Text style={styles.petBreed}>{item.breedType?.name || 'Unknown breed'}</Text>
-                <Text style={styles.petDistance}>{item.kms?.toFixed(1) || '?'} km away</Text>
+                <Text style={[styles.petName, { color: colors.text }]}>{item.name}</Text>
+                <Text style={[styles.petBreed, { color: colors.secondaryText }]}>
+                  {item.breedType?.name || 'Unknown breed'}
+                </Text>
+                <Text style={[styles.petDistance, { color: colors.primary }]}>
+                  {item.kms?.toFixed(1) || '?'} km away
+                </Text>
               </View>
             </TouchableOpacity>
           )}
@@ -133,23 +141,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   viewAll: {
     fontSize: 14,
-    color: '#FF6F61',
   },
   emptyText: {
     textAlign: 'center',
     marginVertical: 20,
-    color: '#666',
   },
   petCard: {
     width: 160,
     marginRight: 16,
     borderRadius: 8,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -168,16 +171,13 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
   },
   petBreed: {
     fontSize: 14,
-    color: '#666',
     marginTop: 4,
   },
   petDistance: {
     fontSize: 12,
-    color: '#FF6F61',
     marginTop: 4,
   },
 });

@@ -12,23 +12,25 @@ import { useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { removeToken } from '../utils/authStorage';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useTheme } from '../context/ThemeContext';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const { colors } = useTheme();
 
   const menuItems = [
     {
       id: 'profile',
       title: 'My Profile',
       icon: 'person-outline',
-      onPress: () => console.log('Profile pressed')
+      onPress: () => navigation.navigate('AccountEdit' as never)
     },
     {
       id: 'appearance',
       title: 'App Appearance',
       icon: 'color-palette-outline',
-      onPress: () => console.log('Appearance pressed')
+      onPress: () => navigation.navigate('Appearance' as never)
     },
     {
       id: 'help',
@@ -48,30 +50,30 @@ const AccountScreen = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.mainContainer}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Account</Text>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
+          <Text style={[styles.title, { color: colors.text }]}>Account</Text>
         </View>
 
         <View style={styles.menuContainer}>
           {menuItems.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.menuItem}
+              style={[styles.menuItem, { borderBottomColor: colors.border }]}
               onPress={item.onPress}
             >
               <View style={styles.menuItemContent}>
-                <Ionicons name={item.icon} size={24} color="#666" />
-                <Text style={styles.menuItemText}>{item.title}</Text>
+                <Ionicons name={item.icon} size={24} color={colors.secondaryText} />
+                <Text style={[styles.menuItemText, { color: colors.text }]}>{item.title}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={24} color="#666" />
+              <Ionicons name="chevron-forward" size={24} color={colors.secondaryText} />
             </TouchableOpacity>
           ))}
         </View>
 
         <TouchableOpacity
-          style={styles.logoutButton}
+          style={[styles.logoutButton, { backgroundColor: colors.primary }]}
           onPress={() => setShowLogoutModal(true)}
         >
           <Text style={styles.logoutText}>Logout</Text>
@@ -83,19 +85,19 @@ const AccountScreen = () => {
         transparent={true}
         animationType="fade"
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Logout</Text>
-            <Text style={styles.modalText}>Are you sure you want to logout?</Text>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.modalBackground }]}>
+          <View style={[styles.modalContent, { backgroundColor: colors.modalContent }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Logout</Text>
+            <Text style={[styles.modalText, { color: colors.secondaryText }]}>Are you sure you want to logout?</Text>
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.modalButton, styles.cancelButton]}
+                style={[styles.modalButton, styles.cancelButton, { backgroundColor: colors.border }]}
                 onPress={() => setShowLogoutModal(false)}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={[styles.cancelButtonText, { color: colors.text }]}>Cancel</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.modalButton, styles.confirmButton]}
+                style={[styles.modalButton, styles.confirmButton, { backgroundColor: colors.primary }]}
                 onPress={handleLogout}
               >
                 <Text style={styles.confirmButtonText}>Logout</Text>
@@ -113,7 +115,6 @@ const AccountScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   mainContainer: {
     flex: 1,
@@ -121,12 +122,10 @@ const styles = StyleSheet.create({
   header: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
   },
   menuContainer: {
     marginTop: 16,
@@ -137,7 +136,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -146,12 +144,10 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     marginLeft: 12,
-    color: '#333',
   },
   logoutButton: {
     margin: 16,
     padding: 16,
-    backgroundColor: '#FF6F61',
     borderRadius: 8,
     alignItems: 'center',
     position: 'absolute',
@@ -166,12 +162,10 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   modalContent: {
-    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 24,
     width: '80%',
@@ -180,12 +174,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#333',
   },
   modalText: {
     fontSize: 16,
     marginBottom: 24,
-    color: '#666',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -197,14 +189,9 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     marginLeft: 12,
   },
-  cancelButton: {
-    backgroundColor: '#EEEEEE',
-  },
-  confirmButton: {
-    backgroundColor: '#FF6F61',
-  },
+  cancelButton: {},
+  confirmButton: {},
   cancelButtonText: {
-    color: '#333',
     fontSize: 14,
     fontWeight: '600',
   },

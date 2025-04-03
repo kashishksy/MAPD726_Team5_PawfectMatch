@@ -11,6 +11,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useTheme } from '../context/ThemeContext';
 
 type RootStackParamList = {
   FAQ: undefined;
@@ -41,11 +42,12 @@ const menuItems = [
 
 const HelpSupportScreen = () => {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.mainContainer}>
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity 
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
@@ -55,21 +57,21 @@ const HelpSupportScreen = () => {
               style={styles.inputIcon} 
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Help & Support</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Help & Support</Text>
         </View>
 
         <View style={styles.menuContainer}>
           {menuItems.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.menuItem}
+              style={[styles.menuItem, { borderBottomColor: colors.border }]}
               onPress={() => navigation.navigate(item.screen)}
             >
               <View style={styles.menuItemContent}>
-                <Ionicons name={item.icon} size={24} color="#666" />
-                <Text style={styles.menuItemText}>{item.title}</Text>
+                <Ionicons name={item.icon} size={24} color={colors.secondaryText} />
+                <Text style={[styles.menuItemText, { color: colors.text }]}>{item.title}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={24} color="#666" />
+              <Ionicons name="chevron-forward" size={24} color={colors.secondaryText} />
             </TouchableOpacity>
           ))}
         </View>
@@ -82,7 +84,6 @@ const HelpSupportScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   mainContainer: {
     flex: 1,
@@ -92,7 +93,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   backButton: {
     padding: 8,
@@ -106,7 +106,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 12,
-    color: '#333',
   },
   menuContainer: {
     marginTop: 16,
@@ -117,7 +116,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   menuItemContent: {
     flexDirection: 'row',
@@ -126,7 +124,6 @@ const styles = StyleSheet.create({
   menuItemText: {
     fontSize: 16,
     marginLeft: 12,
-    color: '#333',
   },
 });
 

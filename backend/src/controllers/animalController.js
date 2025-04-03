@@ -3,6 +3,7 @@ const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 const Favorite = require('../models/favoriteAnimalModel');
+const User = require('../models/userModel');
 require('dotenv').config();
 
 cloudinary.config({
@@ -40,6 +41,9 @@ exports.getAnimalList = async (req, res) => {
             .sort({ createdAt: -1 });
 
         const animalIds = animals.map((animal) => animal._id); // Extract animal IDs
+        const ownerIds = animals.map((animal) => animal.owner);
+
+        const owners = await User.find({ _id: { $in: ownerIds } }).lean();
 
         let favoriteAnimalIds = [];
         if (userId) {
@@ -57,10 +61,13 @@ exports.getAnimalList = async (req, res) => {
                 );
             }
 
+            const ownerDetails = owners.find((owner) => owner._id.toString() === obj.owner);
+
             return {
                 ...obj.toObject(),
                 kms: distanceInKm,
-                isFavorite: favoriteAnimalIds.includes(obj._id.toString()) // Check if the animal is a favorite
+                isFavorite: favoriteAnimalIds.includes(obj._id.toString()), // Check if the animal is a favorite
+                owner: ownerDetails || obj.owner
             };
         });
 
@@ -96,8 +103,15 @@ exports.searchAnimals = async (req, res) => {
                 { gender: { $regex: new RegExp(`^${gender}$`, 'i') } } // Case-insensitive match
             ];
         }
-        if (petType) query.petType = petType;
-        if (breedType) query.breedType = breedType;
+        // Handle multiple petType filtering
+        if (Array.isArray(petType) && petType.length > 0) {
+            query.petType = { $in: petType };
+        }
+
+        // Handle multiple breedType filtering
+        if (Array.isArray(breedType) && breedType.length > 0) {
+            query.breedType = { $in: breedType };
+        }
 
         const totalAnimals = await Animal.countDocuments(query);
 
@@ -109,6 +123,10 @@ exports.searchAnimals = async (req, res) => {
             .sort({ createdAt: -1 });
 
         const animalIds = animals.map((animal) => animal._id); // Extract animal IDs
+        const ownerIds = animals.map((animal) => animal.owner);
+
+        const owners = await User.find({ _id: { $in: ownerIds } }).lean();
+        
 
         let favoriteAnimalIds = [];
         if (userId) {
@@ -125,11 +143,13 @@ exports.searchAnimals = async (req, res) => {
                     obj.location.lat, obj.location.lng
                 );
             }
+            const ownerDetails = owners.find((owner) => owner._id.toString() === obj.owner);
 
             return {
                 ...obj.toObject(),
                 kms: distanceInKm,
-                isFavorite: favoriteAnimalIds.includes(obj._id.toString()) // Check if the animal is a favorite
+                isFavorite: favoriteAnimalIds.includes(obj._id.toString()), // Check if the animal is a favorite
+                owner: ownerDetails || obj.owner
             };
         });
 
@@ -183,11 +203,15 @@ exports.getAnimalDetails = async (req, res) => {
             isFavorite = !!favorite; // Convert to boolean
         }
 
+        const ownerDetails = await User.findById(animal.owner).lean();
+        const animalData = animal.toObject();
+
         return res.status(200).json({
             status: 200,
             message: "Animal details fetched successfully!",
             data: {
-                ...animal.toObject(),
+                ...animalData,
+                owner: ownerDetails || animal.owner, 
                 kms: distanceInKm, // Add distance in km
                 isFavorite: isFavorite // Add isFavorite key
             }
@@ -218,10 +242,16 @@ exports.addOrEditAnimal = async (req, res) => {
 
         try {
             const { id } = req.params;
-            const userId = req.user ? req.user._id : null;
+            const user = req.user;
+            const userId = user ? user._id : null;
 
             if (!userId) {
                 return res.status(401).json({ status: 401, message: "Unauthorized: User not logged in." });
+            }
+
+            // Check if user has permission to create or edit animals
+            if (user.userType !== "Pet Owner") {
+                return res.status(403).json({ status: 403, message: "Forbidden: Only Pet Owners can add or edit animals." });
             }
 
             let animal;
@@ -268,8 +298,81 @@ exports.addOrEditAnimal = async (req, res) => {
 
                 await animal.save();
             } else {
-                // Creating new animal (existing code for creating new animal)
-                // ... (keep the existing code for creating a new animal)
+                // Creating new animal 
+                const {
+                    name,
+                    gender,
+                    petType,
+                    breedType,
+                    size,
+                    age,
+                    location,
+                    address,
+                    city,
+                    state,
+                    country,
+                    description,
+                } = req.body;
+
+                const missingFields = [];
+                if (!name) missingFields.push("name");
+                if (!gender) missingFields.push("gender");
+                if (!petType) missingFields.push("petType");
+                if (!size) missingFields.push("size");
+                if (!age) missingFields.push("age");
+                if (!location) missingFields.push("location");
+                if (!address) missingFields.push("address");
+                if (!city) missingFields.push("city");
+                if (!state) missingFields.push("state");
+                if (!country) missingFields.push("country");
+                if (!description) missingFields.push("description");
+
+                if (missingFields.length > 0) {
+                    return res.status(400).json({
+                        status: 400,
+                        message: "Validation failed. The following fields are required:",
+                        missingFields: missingFields
+                    });
+                }
+                let parsedLocation;
+                try {
+                    parsedLocation = typeof location === "string" ? JSON.parse(location) : location;
+                    if (!parsedLocation.lat || !parsedLocation.lng) {
+                        return res.status(400).json({ status: 400, message: "Invalid location format. lat and lng are required." });
+                    }
+                } catch (parseError) {
+                    return res.status(400).json({ status: 400, message: "Invalid location format. Must be a JSON object." });
+                }
+
+                // Ensure images are uploaded
+                if (!req.files || req.files.length === 0) {
+                    return res.status(400).json({ status: 400, message: "At least one image is required." });
+                }
+                const images = req.files.map((file) => file.path); // Cloudinary image URLs
+
+                // Create a new animal (Assign 'owner' as 'userId')
+                animal = new Animal({
+                    name,
+                    images,
+                    gender,
+                    petType,
+                    breedType: breedType || null,
+                    size,
+                    age,
+                    location: {
+                        lat: parseFloat(parsedLocation.lat),
+                        lng: parseFloat(parsedLocation.lng),
+                    },
+                    address,
+                    city,
+                    state,
+                    country,
+                    owner: userId, //  Set the logged-in user as the owner
+                    description,
+                });
+
+                await animal.save();
+
             }
 
             return res.status(200).json({

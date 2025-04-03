@@ -7,6 +7,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { toggleFavorite, setFavorites, loadFavoritesFromStorage } from '../../redux/slices/favoritesSlice';
 import { RootState } from '../../redux/types';
 import type { Animal } from '../../redux/slices/animalsSlice';
+import { useTheme } from '../../context/ThemeContext';
 
 // Define types for navigation
 type RootStackParamList = {
@@ -19,6 +20,7 @@ const NearbyPets = () => {
   const dispatch = useDispatch();
   const { animals, loading, error } = useSelector((state: RootState) => state.animals);
   const favorites = useSelector((state: RootState) => state.favorites.items);
+  const { colors } = useTheme();
 
   // Load favorites from AsyncStorage when component mounts
   useEffect(() => {
@@ -64,7 +66,7 @@ const NearbyPets = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading nearby pets...</Text>
+        <Text style={{ color: colors.text }}>Loading nearby pets...</Text>
       </View>
     );
   }
@@ -72,7 +74,7 @@ const NearbyPets = () => {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text>Error loading nearby pets: {error}</Text>
+        <Text style={{ color: colors.text }}>Error loading nearby pets: {error}</Text>
       </View>
     );
   }
@@ -80,14 +82,14 @@ const NearbyPets = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Pets Near You</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Pets Near You</Text>
         <TouchableOpacity onPress={handleViewAll}>
-          <Text style={styles.viewAll}>View All</Text>
+          <Text style={[styles.viewAll, { color: colors.primary }]}>View All</Text>
         </TouchableOpacity>
       </View>
 
       {nearbyAnimals.length === 0 ? (
-        <Text style={styles.emptyText}>No nearby pets found</Text>
+        <Text style={[styles.emptyText, { color: colors.secondaryText }]}>No nearby pets found</Text>
       ) : (
         <FlatList
           data={nearbyAnimals}
@@ -98,7 +100,10 @@ const NearbyPets = () => {
             const isFavorited = favorites.some(fav => fav.id === item._id);
             return (
               <TouchableOpacity 
-                style={styles.petCard}
+                style={[styles.petCard, { 
+                  backgroundColor: colors.card,
+                  shadowColor: colors.text 
+                }]}
                 onPress={() => handlePetPress(item._id)}
               >
                 <View style={styles.imageContainer}>
@@ -126,9 +131,13 @@ const NearbyPets = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.petInfo}>
-                  <Text style={styles.petName}>{item.name}</Text>
-                  <Text style={styles.petBreed}>{item.breedType?.name || 'Unknown breed'}</Text>
-                  <Text style={styles.petDistance}>{item.kms?.toFixed(1) || '?'} km away</Text>
+                  <Text style={[styles.petName, { color: colors.text }]}>{item.name}</Text>
+                  <Text style={[styles.petBreed, { color: colors.secondaryText }]}>
+                    {item.breedType?.name || 'Unknown breed'}
+                  </Text>
+                  <Text style={[styles.petDistance, { color: colors.primary }]}>
+                    {item.kms?.toFixed(1) || '?'} km away
+                  </Text>
                 </View>
               </TouchableOpacity>
             );
@@ -152,23 +161,18 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
   },
   viewAll: {
     fontSize: 14,
-    color: '#FF6F61',
   },
   emptyText: {
     textAlign: 'center',
     marginVertical: 20,
-    color: '#666',
   },
   petCard: {
     width: 160,
     marginRight: 16,
     borderRadius: 8,
-    backgroundColor: '#fff',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -199,16 +203,13 @@ const styles = StyleSheet.create({
   petName: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#333',
   },
   petBreed: {
     fontSize: 14,
-    color: '#666',
     marginTop: 4,
   },
   petDistance: {
     fontSize: 12,
-    color: '#FF6F61',
     marginTop: 4,
   },
 });
