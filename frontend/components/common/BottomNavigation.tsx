@@ -48,6 +48,8 @@ const BottomNavigation = () => {
         return 'home';
       case 'Favorites':
         return 'favorites';
+      case 'MapScreen':
+        return 'maps';
       // Add other cases as needed
       default:
         return 'home';
@@ -61,6 +63,9 @@ const BottomNavigation = () => {
     } else if (tabId === 'favorites') {
       navigation.navigate('Favorites' as never);
       setActiveTab('favorites');
+    } else if (tabId === 'maps') {
+      navigation.navigate('MapScreen' as never);
+      setActiveTab('maps');
     } else if (tabId === 'home') {
       navigation.navigate('Dashboard' as never);
       setActiveTab('home');
