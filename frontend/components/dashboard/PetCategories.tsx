@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
+import { useTheme } from '../../context/ThemeContext';
 
 const PetCategories = ({ navigation }: any) => {
   const { petTypes, loading, error } = useSelector((state: any) => state.petTypes);
+  const { colors } = useTheme();
 
   const handleCategoryPress = (petType: string) => {
     // Navigate to pet type specific screen
@@ -14,7 +16,7 @@ const PetCategories = ({ navigation }: any) => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading pet types...</Text>
+        <Text style={{ color: colors.text }}>Loading pet types...</Text>
       </View>
     );
   }
@@ -22,7 +24,7 @@ const PetCategories = ({ navigation }: any) => {
   if (error) {
     return (
       <View style={styles.container}>
-        <Text>Error loading pet types: {error}</Text>
+        <Text style={{ color: colors.text }}>Error loading pet types: {error}</Text>
       </View>
     );
   }
@@ -36,10 +38,10 @@ const PetCategories = ({ navigation }: any) => {
             style={styles.categoryItem}
             onPress={() => handleCategoryPress(category._id)}
           >
-            <View style={styles.iconContainer}>
+            <View style={[styles.iconContainer, { backgroundColor: colors.card }]}>
               <Text style={styles.emoji}>{category.emoji}</Text>
             </View>
-            <Text style={styles.categoryName}>{category.name}</Text>
+            <Text style={[styles.categoryName, { color: colors.text }]}>{category.name}</Text>
           </TouchableOpacity>
         )).slice(0, 8)}
       </View>
@@ -65,7 +67,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#F8F8F8',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
@@ -76,7 +77,6 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 12,
     textAlign: 'center',
-    color: '#333',
   },
 });
 

@@ -10,14 +10,16 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import BottomNavigation from '../components/common/BottomNavigation';
+import { useTheme } from '../context/ThemeContext';
 
 const PrivacyPolicyScreen = () => {
   const navigation = useNavigation();
+  const { colors } = useTheme();
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={styles.mainContainer}>
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.border }]}>
           <TouchableOpacity 
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
@@ -27,27 +29,27 @@ const PrivacyPolicyScreen = () => {
               style={styles.inputIcon} 
             />
           </TouchableOpacity>
-          <Text style={styles.title}>Privacy Policy</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Privacy Policy</Text>
         </View>
 
         <ScrollView style={styles.content}>
-          <Text style={styles.sectionTitle}>Information We Collect</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Information We Collect</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             We collect information that you provide directly to us, including when you create an account, list a pet, or communicate with other users. This may include your name, email address, phone number, and photos.
           </Text>
 
-          <Text style={styles.sectionTitle}>How We Use Your Information</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>How We Use Your Information</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             We use the information we collect to provide and improve our services, communicate with you, and ensure a safe environment for pet adoption.
           </Text>
 
-          <Text style={styles.sectionTitle}>Information Sharing</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Information Sharing</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             We do not sell your personal information. We may share your information with other users as necessary for pet adoption purposes, and with service providers who assist in operating our platform.
           </Text>
 
-          <Text style={styles.sectionTitle}>Data Security</Text>
-          <Text style={styles.text}>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Data Security</Text>
+          <Text style={[styles.text, { color: colors.secondaryText }]}>
             We implement appropriate security measures to protect your personal information. However, no method of transmission over the internet is 100% secure.
           </Text>
         </ScrollView>
@@ -60,7 +62,6 @@ const PrivacyPolicyScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   mainContainer: {
     flex: 1,
@@ -70,7 +71,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEEEEE',
   },
   backButton: {
     padding: 8,
@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginLeft: 12,
-    color: '#333',
   },
   content: {
     flex: 1,
@@ -93,13 +92,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginTop: 24,
     marginBottom: 12,
   },
   text: {
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
 });

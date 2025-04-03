@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { removeToken } from '../../utils/authStorage';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { useTheme } from '../../context/ThemeContext';
 
 const navigationItems = [
   {
@@ -40,6 +41,7 @@ const navigationItems = [
 const BottomNavigation = () => {
   const route = useRoute();
   const navigation = useNavigation();
+  const { colors } = useTheme();
   
   // Set initial active tab based on current route
   const [activeTab, setActiveTab] = React.useState(() => {
@@ -48,6 +50,11 @@ const BottomNavigation = () => {
         return 'home';
       case 'Favorites':
         return 'favorites';
+      case 'Account':
+      case 'AccountEdit':
+      case 'Appearance':
+      case 'HelpSupport':
+        return 'account';
       // Add other cases as needed
       default:
         return 'home';
@@ -78,12 +85,18 @@ const BottomNavigation = () => {
       case 'Favorites':
         setActiveTab('favorites');
         break;
+      case 'Account':
+      case 'AccountEdit':
+      case 'Appearance':
+      case 'HelpSupport':
+        setActiveTab('account');
+        break;
       // Add other cases as needed
     }
   }, [route.name]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
       {navigationItems.map((item) => (
         <TouchableOpacity
           key={item.id}
@@ -93,11 +106,12 @@ const BottomNavigation = () => {
           <Ionicons
             name={activeTab === item.id ? item.activeIcon : item.icon}
             size={24}
-            color={activeTab === item.id ? '#FF6F61' : '#666666'}
+            color={activeTab === item.id ? colors.primary : colors.secondaryText}
           />
           <Text
             style={[
               styles.label,
+              { color: activeTab === item.id ? colors.primary : colors.secondaryText },
               activeTab === item.id && styles.activeLabel,
             ]}
           >
@@ -112,23 +126,20 @@ const BottomNavigation = () => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    paddingVertical: 12,
+    height: 60,
     borderTopWidth: 1,
-    borderTopColor: '#EEEEEE',
   },
   tabItem: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
   },
   label: {
     fontSize: 12,
-    color: '#666666',
     marginTop: 4,
   },
   activeLabel: {
-    color: '#F4A460',
+    fontWeight: '500',
   },
 });
 

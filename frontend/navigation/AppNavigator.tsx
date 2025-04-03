@@ -23,6 +23,8 @@ import OwnerOrganizationDetailsScreen from '../screens/OwnerOrganizationDetailsS
 import CatPawLoader from "../components/CatPawLoader";
 import Favorites from '../screens/Favorites';
 import AccountScreen from '../screens/AccountScreen';
+import AccountEditScreen from '../screens/AccountEditScreen';
+import AppearanceScreen from '../screens/AppearanceScreen';
 import PetListScreen from "../screens/PetListScreen";
 import PetDetailsScreen from "../screens/PetDetailsScreen";
 import FAQScreen from '../screens/FAQScreen';
@@ -83,6 +85,8 @@ const AppNavigator = () => {
         <Stack.Screen name="CatPawLoader" component={CatPawLoader} />
         <Stack.Screen name="Favorites" component={Favorites} />
         <Stack.Screen name="Account" component={AccountScreen} />
+        <Stack.Screen name="AccountEdit" component={AccountEditScreen} />
+        <Stack.Screen name="Appearance" component={AppearanceScreen} />
         <Stack.Screen name="PetListScreen" component={PetListScreen} />
         <Stack.Screen name="PetDetails" component={PetDetailsScreen} />
         <Stack.Screen name="FAQ" component={FAQScreen} />

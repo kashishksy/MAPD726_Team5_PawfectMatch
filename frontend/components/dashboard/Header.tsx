@@ -2,24 +2,26 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import { useTheme } from '../../context/ThemeContext';
 
 const Header = ({ navigation }: any) => {
+  const { colors } = useTheme();
+  
   return (
-    <View style={styles.header}>
+    <View style={[styles.header, { backgroundColor: colors.background }]}>
       <View style={styles.leftContainer}>
         <Image 
           source={require('../../assets/images/shiba_inu.png')}
           style={styles.logo}
         />
       </View>
-      <Text style={styles.title}>PawfectMatch</Text>
+      <Text style={[styles.title, { color: colors.text }]}>PawfectMatch</Text>
       <View style={styles.rightIcons}>
         <TouchableOpacity onPress={() => navigation.navigate('SearchScreen')}>
-          <Icon name="search1" size={24} color="#000" />
+          <Icon name="search1" size={24} color={colors.text} />
         </TouchableOpacity>
         <TouchableOpacity>
-          <Ionicons name="notifications-outline" size={24} color="#000" />
+          <Ionicons name="notifications-outline" size={24} color={colors.text} />
         </TouchableOpacity>
       </View>
     </View>
@@ -34,7 +36,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 44,
     paddingBottom: 16,
-    backgroundColor: '#FFFFFF',
   },
   logo: {
     width: 34,
@@ -48,7 +49,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: '600',
-    color: '#000000',
     flex: 1,
     textAlign: 'center',
     position: 'relative', 

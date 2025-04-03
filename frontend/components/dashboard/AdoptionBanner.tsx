@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 
 const AdoptionBanner = () => {
+  const { colors } = useTheme();
+  
   return (
     <View style={styles.banner}>
       <View style={styles.textContainer}>
