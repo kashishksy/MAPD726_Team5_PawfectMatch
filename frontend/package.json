@@ -20,6 +20,8 @@
     "@react-native-async-storage/async-storage": "^2.1.1",
     "@react-native-community/blur": "^4.4.1",
     "@react-native-community/geolocation": "^3.4.0",
+    "@react-native-firebase/app": "^21.13.0",
+    "@react-native-firebase/firestore": "^21.13.0",
     "@react-native-picker/picker": "^2.11.0",
     "@react-native-vector-icons/evil-icons": "^1.10.1",
     "@react-native-vector-icons/fontawesome6": "^6.7.1",
