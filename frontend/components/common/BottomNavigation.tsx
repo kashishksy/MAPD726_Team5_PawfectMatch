@@ -52,6 +52,9 @@ const BottomNavigation = () => {
         return 'favorites';
       case 'MapScreen':
         return 'maps';
+      case 'MessagesScreen':
+      case 'ChatDetail':
+        return 'messages';
       case 'Account':
       case 'AccountEdit':
       case 'Appearance':
@@ -76,6 +79,9 @@ const BottomNavigation = () => {
     } else if (tabId === 'home') {
       navigation.navigate('Dashboard' as never);
       setActiveTab('home');
+    } else if (tabId === 'messages') {
+      navigation.navigate('MessagesScreen' as never);
+      setActiveTab('messages');
     } else {
       setActiveTab(tabId);
     }
@@ -89,6 +95,13 @@ const BottomNavigation = () => {
         break;
       case 'Favorites':
         setActiveTab('favorites');
+        break;
+      case 'MapScreen':
+        setActiveTab('maps');
+        break;
+      case 'MessagesScreen':
+      case 'ChatDetail':
+        setActiveTab('messages');
         break;
       case 'Account':
       case 'AccountEdit':

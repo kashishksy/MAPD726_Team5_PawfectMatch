@@ -32,6 +32,8 @@ import PrivacyPolicyScreen from '../screens/PrivacyPolicyScreen';
 import TermsOfServiceScreen from '../screens/TermsOfServiceScreen';
 import HelpSupportScreen from '../screens/HelpSupportScreen';
 import MapScreen from "../screens/MapScreen";
+import MessagesScreen from "../screens/MessagesScreen";
+import ChatDetailScreen from "../screens/ChatDetailScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -95,6 +97,8 @@ const AppNavigator = () => {
         <Stack.Screen name="TermsOfService" component={TermsOfServiceScreen} />
         <Stack.Screen name="HelpSupport" component={HelpSupportScreen} />
         <Stack.Screen name="MapScreen" component={MapScreen} />
+        <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
+        <Stack.Screen name="ChatDetail" component={ChatDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

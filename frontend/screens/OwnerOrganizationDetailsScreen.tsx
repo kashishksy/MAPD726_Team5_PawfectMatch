@@ -8,75 +8,135 @@ import {
     SafeAreaView,
     Linking,
     FlatList,
-    ScrollView
+    ScrollView,
+    ActivityIndicator
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
-import  Ionicons from 'react-native-vector-icons/Ionicons'; // Import heart icon
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleFavorite } from '../redux/slices/favoritesSlice';
+import { RootState } from '../redux/types';
+import { useTheme } from '../context/ThemeContext';
 
-// Sample Pets Data (Replace with API Data)
-const pets = [
-    { id: 1, name: "Mochi", breed: "Abyssinian", distance: "1.2 km", image: require("../assets/images/mochi.png") },
-    { id: 2, name: "Luna", breed: "Chihuahua", distance: "1.2 km", image: require("../assets/images/luna.png") },
-    { id: 3, name: "Casper", breed: "Maine Coon", distance: "1.2 km", image: require("../assets/images/casper.jpeg") },
-    { id: 4, name: "Bella", breed: "Siamese", distance: "1.2 km", image: require("../assets/images/bella.png") },
-    { id: 5, name: "Clover", breed: "Rabbit", distance: "1.2 km", image: require("../assets/images/clover.png") },
-    { id: 6, name: "Hazel", breed: "Rabbit", distance: "1.2 km", image: require("../assets/images/hazel.png") },
-];
+// Define interfaces for type safety
+interface PetOwner {
+    _id: string;
+    fullName: string;
+    profileImage: string | null;
+    mobileNumber?: string;
+    countryCode?: string;
+    userType: string;
+}
 
-const OwnerOrganizationDetailsScreen = ({ navigation }: any) => {
-    const phoneNumber = "+1234567890";
-    const email = "info@petadopt.org";
-    const website = "https://www.petadopt.org";
-    const locationQuery = "1600 Amphitheatre Parkway, Mountain View, CA";
+interface OwnerPet {
+    _id: string;
+    name: string;
+    breedType?: {
+        _id: string;
+        name: string;
+    };
+    images: string[];
+    kms?: number;
+    gender?: string;
+    age?: string;
+    size?: string;
+    description?: string;
+    owner?: {
+        _id: string;
+        fullName: string;
+    };
+}
+
+const OwnerOrganizationDetailsScreen = ({ route, navigation }: any) => {
+    const { ownerData, petId, address, city, state, country } = route.params;
+    const [selectedTab, setSelectedTab] = useState("Pets");
+    
+    const dispatch = useDispatch();
+    const favorites = useSelector((state: RootState) => state.favorites.items);
+    const allAnimals = useSelector((state: RootState) => state.animals.animals);
+    const animalsLoading = useSelector((state: RootState) => state.animals.loading);
+    const animalsError = useSelector((state: RootState) => state.animals.error);
+    const { colors } = useTheme();
+    
+    // Filter pets by owner ID only, don't exclude the current pet
+    const ownerPets = allAnimals.filter((pet: OwnerPet) => 
+        pet.owner?._id === ownerData._id
+    );
+    
+    // Format phone number with country code
+    const phoneNumber = ownerData?.mobileNumber 
+        ? `+${ownerData.countryCode || '1'}${ownerData.mobileNumber}` 
+        : "";
+    const email = "info@petadopt.org"; // Default email if not available
+    const website = "https://www.petadopt.org"; // Default website if not available
+    const locationQuery = `${address || ''}, ${city || ''}, ${state || ''}, ${country || ''}`;
 
     // Handlers for Actions
-    const handleCall = () => Linking.openURL(`tel:${phoneNumber}`);
+    const handleCall = () => phoneNumber && Linking.openURL(`tel:${phoneNumber}`);
     const handleEmail = () => Linking.openURL(`mailto:${email}`);
     const handleWebsite = () => Linking.openURL(website);
     const handleNavigate = () => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`);
 
-    const [selectedTab, setSelectedTab] = useState("Pets");
-    const [favorites, setFavorites] = useState<number[]>([]); // State for favorite pets
-
     // Toggle favorite status
-    const toggleFavorite = (petId: number) => {
-        setFavorites(prevFavorites =>
-            prevFavorites.includes(petId)
-                ? prevFavorites.filter(id => id !== petId) // Remove from favorites
-                : [...prevFavorites, petId] // Add to favorites
-        );
+    const handleToggleFavorite = (pet: OwnerPet) => {
+        dispatch(toggleFavorite({
+            id: pet._id,
+            title: pet.name,
+            description: pet.breedType?.name || 'Unknown breed',
+            images: pet.images,
+            name: pet.name,
+            breedType: pet.breedType,
+            kms: pet.kms
+        }));
+    };
+    
+    const handlePetPress = (petId: string) => {
+        navigation.navigate('PetDetails', { petId });
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
+        <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+            <View style={[styles.header, { borderBottomColor: colors.border }]}>
                 <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-                    <Image source={require('../assets/images/back_icon.png')} style={styles.inputIcon} />
+                    <Ionicons name="arrow-back" size={24} color={colors.text} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Owner / Organization</Text>
+                <Text style={[styles.title, { color: colors.text }]}>Owner / Organization</Text>
             </View>
 
             {/* Organization Details Card */}
-            <View style={styles.card}>
-                <Image source={require('../assets/images/stock_photo1.jpg')} style={styles.profileImage} />
+            <View style={[styles.card, { backgroundColor: colors.card }]}>
+                <Image 
+                    source={
+                        ownerData?.profileImage 
+                            ? { uri: ownerData.profileImage } 
+                            : require('../assets/images/stock_photo1.jpg')
+                    } 
+                    style={styles.profileImage} 
+                />
                 <View style={styles.detailsContainer}>
-                    <Text style={styles.cardTitle}>Happy Tails Animal Rescue</Text>
+                    <Text style={[styles.cardTitle, { color: colors.text }]}>
+                        {ownerData?.fullName || 'Pet Owner'}
+                    </Text>
                     <View style={styles.detailRow}>
                         <MaterialIcons name="place" size={20} color="#FF6F61" />
-                        <Text style={styles.detailText}>New York, USA</Text>
+                        <Text style={[styles.detailText, { color: colors.text }]}>
+                            {city ? `${city}, ${state || ''}` : 'Location not available'}
+                        </Text>
                     </View>
-                    <View style={styles.detailRow}>
-                        <MaterialIcons name="call" size={20} color="#FF6F61" />
-                        <Text style={styles.detailText}>{phoneNumber}</Text>
-                    </View>
+                    {phoneNumber && (
+                        <View style={styles.detailRow}>
+                            <MaterialIcons name="call" size={20} color="#FF6F61" />
+                            <Text style={[styles.detailText, { color: colors.text }]}>{phoneNumber}</Text>
+                        </View>
+                    )}
                     <View style={styles.detailRow}>
                         <MaterialIcons name="email" size={20} color="#FF6F61" />
-                        <Text style={styles.detailText}>{email}</Text>
+                        <Text style={[styles.detailText, { color: colors.text }]}>{email}</Text>
                     </View>
                     <View style={styles.detailRow}>
                         <MaterialIcons name="language" size={20} color="#FF6F61" />
-                        <Text style={styles.detailText}>{website}</Text>
+                        <Text style={[styles.detailText, { color: colors.text }]}>{website}</Text>
                     </View>
                 </View>
             </View>
@@ -85,60 +145,134 @@ const OwnerOrganizationDetailsScreen = ({ navigation }: any) => {
             <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.actionButton} onPress={handleCall}>
                     <MaterialIcons name="phone" size={28} color="#FF6F61" />
-                    <Text style={styles.actionText}>Call</Text>
+                    <Text style={[styles.actionText, { color: colors.text }]}>Call</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={handleEmail}>
                     <MaterialIcons name="email" size={28} color="#FF6F61" />
-                    <Text style={styles.actionText}>Email</Text>
+                    <Text style={[styles.actionText, { color: colors.text }]}>Email</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={handleWebsite}>
                     <MaterialIcons name="public" size={28} color="#FF6F61" />
-                    <Text style={styles.actionText}>Website</Text>
+                    <Text style={[styles.actionText, { color: colors.text }]}>Website</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.actionButton} onPress={handleNavigate}>
                     <MaterialIcons name="map" size={28} color="#FF6F61" />
-                    <Text style={styles.actionText}>Navigate</Text>
+                    <Text style={[styles.actionText, { color: colors.text }]}>Navigate</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Tab Switch */}
             <View style={styles.tabContainer}>
-                <TouchableOpacity style={[styles.tabButton, selectedTab === "Pets" && styles.activeTab]} onPress={() => setSelectedTab("Pets")}>
-                    <Text style={[styles.tabText, selectedTab === "Pets" && styles.activeTabText]}>Pets</Text>
+                <TouchableOpacity 
+                    style={[
+                        styles.tabButton, 
+                        selectedTab === "Pets" && styles.activeTab,
+                        { backgroundColor: selectedTab === "Pets" ? "#FF6F61" : colors.card }
+                    ]} 
+                    onPress={() => setSelectedTab("Pets")}
+                >
+                    <Text 
+                        style={[
+                            styles.tabText, 
+                            selectedTab === "Pets" && styles.activeTabText,
+                            { color: selectedTab === "Pets" ? "#fff" : colors.text }
+                        ]}
+                    >
+                        Pets
+                    </Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.tabButton, selectedTab === "Policy" && styles.activeTab]} onPress={() => setSelectedTab("Policy")}>
-                    <Text style={[styles.tabText, selectedTab === "Policy" && styles.activeTabText]}>Adoption Policy</Text>
+                <TouchableOpacity 
+                    style={[
+                        styles.tabButton, 
+                        selectedTab === "Policy" && styles.activeTab,
+                        { backgroundColor: selectedTab === "Policy" ? "#FF6F61" : colors.card }
+                    ]} 
+                    onPress={() => setSelectedTab("Policy")}
+                >
+                    <Text 
+                        style={[
+                            styles.tabText, 
+                            selectedTab === "Policy" && styles.activeTabText,
+                            { color: selectedTab === "Policy" ? "#fff" : colors.text }
+                        ]}
+                    >
+                        Adoption Policy
+                    </Text>
                 </TouchableOpacity>
             </View>
 
             {/* Conditional Content */}
             {selectedTab === "Pets" ? (
-                <FlatList
-                    data={pets}
-                    numColumns={2}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => {
-                        const isFavorited = favorites.includes(item.id);
-                        return (
-                            <View style={styles.petCard}>
-                                <View style={styles.imageContainer}>
-                                    <Image source={item.image} style={styles.petImage} />
-                                    <TouchableOpacity style={styles.favoriteIcon} onPress={() => toggleFavorite(item.id)}>
-                                        <Ionicons name={isFavorited ? "heart" : "heart-outline"} size={24} color={isFavorited ? "#FF6F61" : "#fff"} />
+                <>
+                    {animalsLoading ? (
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color="#FF6F61" />
+                        </View>
+                    ) : animalsError ? (
+                        <Text style={[styles.errorText, { color: colors.text }]}>{animalsError}</Text>
+                    ) : ownerPets.length === 0 ? (
+                        <Text style={[styles.emptyText, { color: colors.text }]}>
+                            No pets available from this owner
+                        </Text>
+                    ) : (
+                        <FlatList
+                            data={ownerPets}
+                            numColumns={2}
+                            keyExtractor={(item: OwnerPet) => item._id}
+                            renderItem={({ item }: { item: OwnerPet }) => {
+                                const isFavorited = favorites.some(fav => fav.id === item._id);
+                                const isCurrentPet = item._id === petId;
+                                
+                                return (
+                                    <TouchableOpacity 
+                                        style={[
+                                            styles.petCard, 
+                                            { 
+                                                backgroundColor: colors.card,
+                                                borderWidth: isCurrentPet ? 2 : 0,
+                                                borderColor: isCurrentPet ? "#FF6F61" : "transparent"
+                                            }
+                                        ]}
+                                        onPress={() => handlePetPress(item._id)}
+                                        disabled={isCurrentPet}
+                                    >
+                                        <View style={styles.imageContainer}>
+                                            <Image 
+                                                source={{ uri: item.images[0] }} 
+                                                style={styles.petImage} 
+                                            />
+                                            <TouchableOpacity 
+                                                style={styles.favoriteIcon} 
+                                                onPress={() => handleToggleFavorite(item)}
+                                            >
+                                                <Ionicons 
+                                                    name={isFavorited ? "heart" : "heart-outline"} 
+                                                    size={24} 
+                                                    color={isFavorited ? "#FF6F61" : "#fff"} 
+                                                />
+                                            </TouchableOpacity>
+                                            {isCurrentPet && (
+                                                <View style={styles.currentPetBadge}>
+                                                    <Text style={styles.currentPetText}>Current</Text>
+                                                </View>
+                                            )}
+                                        </View>
+                                        <Text style={[styles.petName, { color: colors.text }]}>{item.name}</Text>
+                                        <View style={styles.infoContainer}>
+                                            <FontAwesome6 name="location-dot" size={12} color="#F4A460" />
+                                            <Text style={[styles.petInfo, { color: colors.secondaryText }]}>
+                                                {item.kms?.toFixed(1) || '?'} km • {item.breedType?.name || 'Unknown breed'}
+                                            </Text>
+                                        </View>
                                     </TouchableOpacity>
-                                </View>
-                                <Text style={styles.petName}>{item.name}</Text>
-                                <View style={styles.infoContainer}>
-                                    <FontAwesome6 name="location-dot" size={12} color="#F4A460" />
-                                    <Text style={styles.petInfo}>{item.distance} • {item.breed}</Text>
-                                </View>
-                            </View>
-                        );
-                    }}
-                />
+                                );
+                            }}
+                        />
+                    )}
+                </>
             ) : (
                 <ScrollView style={styles.policyContainer}>
-                    <Text style={styles.policyText}>
+                    <Text style={[styles.policyText, { color: colors.text }]}>
                         Adoption policies ensure that pets find safe, loving homes. Adopters must provide proof of residence,
                         undergo an interview, and pay a small adoption fee. Visit the website for more details.
                     </Text>
@@ -151,32 +285,25 @@ const OwnerOrganizationDetailsScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
         gap: 16,
+        borderBottomWidth: 1,
     },
     backButton: {
         padding: 8,
-    },
-    inputIcon: {
-        marginRight: 12,
-        height: 20,
-        width: 20
     },
     title: {
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 5,
-        color: '#333',
     },
     card: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#F5F5F5",
         borderRadius: 10,
         padding: 16,
         margin: 16,
@@ -199,7 +326,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 5,
-        color: '#333',
     },
     detailRow: {
         flexDirection: "row",
@@ -208,7 +334,6 @@ const styles = StyleSheet.create({
     },
     detailText: {
         fontSize: 16,
-        color: "#333",
         marginLeft: 8,
     },
     actionRow: {
@@ -216,7 +341,6 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         marginTop: 16,
         paddingVertical: 12,
-        backgroundColor: "#fff",
     },
     actionButton: {
         alignItems: "center",
@@ -224,7 +348,6 @@ const styles = StyleSheet.create({
     actionText: {
         marginTop: 4,
         fontSize: 14,
-        color: "#333",
     },
     tabContainer: { 
         flexDirection: "row", 
@@ -236,8 +359,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 12, 
         paddingHorizontal: 20, 
-        borderRadius: 8, 
-        backgroundColor: "#EAEAEA", 
+        borderRadius: 8,
         marginHorizontal: 4,
         alignItems: "center"
     },
@@ -245,8 +367,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#FF6F61" 
     },
     tabText: { 
-        fontSize: 16, 
-        color: "#333" 
+        fontSize: 16,
     },
     activeTabText: { 
         color: "#fff", 
@@ -254,8 +375,7 @@ const styles = StyleSheet.create({
     },
     petCard: { 
         flex: 1, 
-        margin: 8, 
-        backgroundColor: "#F9F9F9", 
+        margin: 8,
         borderRadius: 10, 
         padding: 10 
     },
@@ -275,6 +395,20 @@ const styles = StyleSheet.create({
         padding: 6,
         borderRadius: 20,
     },
+    currentPetBadge: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: "rgba(255, 111, 97, 0.8)",
+        paddingVertical: 4,
+        alignItems: "center",
+    },
+    currentPetText: {
+        color: "#fff",
+        fontSize: 12,
+        fontWeight: "bold",
+    },
     petName: { 
         fontSize: 16, 
         fontWeight: "bold", 
@@ -286,19 +420,32 @@ const styles = StyleSheet.create({
         marginTop: 4 
     },
     petInfo: { 
-        fontSize: 12, 
-        color: "#666", 
+        fontSize: 12,
         marginLeft: 4 
     },
     policyContainer: { 
         padding: 16 
     },
     policyText: { 
-        fontSize: 16, 
-        color: "#333", 
+        fontSize: 16,
         lineHeight: 24 
     },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    errorText: {
+        textAlign: 'center',
+        padding: 20,
+        fontSize: 16,
+    },
+    emptyText: {
+        textAlign: 'center',
+        padding: 20,
+        fontSize: 16,
+    }
 });
-
 
 export default OwnerOrganizationDetailsScreen;
