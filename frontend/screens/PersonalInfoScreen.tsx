@@ -12,7 +12,7 @@ import {
   FlatList,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setLoggedIn } from '../redux/slices/authSlice';
+import { setLoggedIn, setUserData } from '../redux/slices/authSlice';
 import ProgressBar from '../components/ProgressBar';
 import api from '../services/api';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -79,6 +79,7 @@ const PersonalInfoScreen = ({ navigation }: any) => {
       }
 
       await storeToken(response.data.data.token);
+      dispatch(setUserData(response.data.data));
       dispatch(setLoggedIn(true));
       navigation.navigate('Dashboard');
 

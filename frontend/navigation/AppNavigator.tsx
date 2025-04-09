@@ -34,6 +34,7 @@ import HelpSupportScreen from '../screens/HelpSupportScreen';
 import MapScreen from "../screens/MapScreen";
 import MessagesScreen from "../screens/MessagesScreen";
 import ChatDetailScreen from "../screens/ChatDetailScreen";
+import AddPetScreen from "../screens/AddPetScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -99,6 +100,7 @@ const AppNavigator = () => {
         <Stack.Screen name="MapScreen" component={MapScreen} />
         <Stack.Screen name="MessagesScreen" component={MessagesScreen} />
         <Stack.Screen name="ChatDetail" component={ChatDetailScreen} />
+        <Stack.Screen name="AddPet" component={AddPetScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
