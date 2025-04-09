@@ -9,34 +9,79 @@ import {
   Alert
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { removeToken } from '../utils/authStorage';
 import BottomNavigation from '../components/common/BottomNavigation';
 import { useTheme } from '../context/ThemeContext';
+import { useSelector } from 'react-redux';
+
+type RootStackParamList = {
+  AccountEdit: undefined;
+  OwnerOrganizationDetails: {
+    ownerData: any;
+    petId: string | null;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+  };
+  Appearance: undefined;
+  HelpSupport: undefined;
+  Login: undefined;
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const AccountScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { colors } = useTheme();
+  const userData = useSelector((state: any) => state.auth.userData);
+  
+  // Debug log to see user data structure
+  console.log('User Data in Account Screen:', JSON.stringify(userData, null, 2));
+  
+  const isPetOwner = userData?.user_type === 'Pet Owner';
 
   const menuItems = [
     {
       id: 'profile',
       title: 'My Profile',
       icon: 'person-outline',
-      onPress: () => navigation.navigate('AccountEdit' as never)
+      onPress: () => navigation.navigate('AccountEdit')
     },
+    ...(isPetOwner ? [{
+      id: 'myPets',
+      title: 'My Pets',
+      icon: 'paw-outline',
+      onPress: () => navigation.navigate('OwnerOrganizationDetails', {
+        ownerData: {
+          _id: userData?.userId || userData?._id,
+          fullName: userData?.fullName,
+          profileImage: userData?.profileImage,
+          mobileNumber: userData?.mobileNumber,
+          countryCode: userData?.countryCode,
+          userType: userData?.user_type
+        },
+        petId: null,
+        address: userData?.address,
+        city: userData?.city,
+        state: userData?.state,
+        country: userData?.country
+      })
+    }] : []),
     {
       id: 'appearance',
       title: 'App Appearance',
       icon: 'color-palette-outline',
-      onPress: () => navigation.navigate('Appearance' as never)
+      onPress: () => navigation.navigate('Appearance')
     },
     {
       id: 'help',
       title: 'Help & Support',
       icon: 'help-circle-outline',
-      onPress: () => navigation.navigate('HelpSupport' as never)
+      onPress: () => navigation.navigate('HelpSupport')
     }
   ];
 

@@ -57,7 +57,11 @@ const OwnerOrganizationDetailsScreen = ({ route, navigation }: any) => {
     const allAnimals = useSelector((state: RootState) => state.animals.animals);
     const animalsLoading = useSelector((state: RootState) => state.animals.loading);
     const animalsError = useSelector((state: RootState) => state.animals.error);
+    const userData = useSelector((state: any) => state.auth.userData);
     const { colors } = useTheme();
+    
+    // Check if the logged-in user is the owner
+    const isOwnProfile = userData?._id === ownerData._id || userData?.userId === ownerData._id;
     
     // Filter pets by owner ID only, don't exclude the current pet
     const ownerPets = allAnimals.filter((pet: OwnerPet) => 
@@ -77,6 +81,7 @@ const OwnerOrganizationDetailsScreen = ({ route, navigation }: any) => {
     const handleEmail = () => Linking.openURL(`mailto:${email}`);
     const handleWebsite = () => Linking.openURL(website);
     const handleNavigate = () => Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`);
+    const handleAddPet = () => navigation.navigate('AddPet');
 
     // Toggle favorite status
     const handleToggleFavorite = (pet: OwnerPet) => {
@@ -200,6 +205,17 @@ const OwnerOrganizationDetailsScreen = ({ route, navigation }: any) => {
                     </Text>
                 </TouchableOpacity>
             </View>
+
+            {/* Add Pet Button (Only shown when user is viewing their own profile) */}
+            {isOwnProfile && selectedTab === "Pets" && (
+                <TouchableOpacity 
+                    style={[styles.addPetButton, { backgroundColor: colors.primary }]}
+                    onPress={handleAddPet}
+                >
+                    <Ionicons name="add-circle-outline" size={24} color="#FFFFFF" />
+                    <Text style={styles.addPetButtonText}>Add New Pet</Text>
+                </TouchableOpacity>
+            )}
 
             {/* Conditional Content */}
             {selectedTab === "Pets" ? (
@@ -445,7 +461,23 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 20,
         fontSize: 16,
-    }
+    },
+    addPetButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 12,
+        marginHorizontal: 16,
+        marginBottom: 16,
+        borderRadius: 8,
+        backgroundColor: '#FF6F61',
+    },
+    addPetButtonText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginLeft: 8,
+    },
 });
 
 export default OwnerOrganizationDetailsScreen;
