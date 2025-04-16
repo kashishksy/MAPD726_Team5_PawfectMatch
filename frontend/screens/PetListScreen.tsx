@@ -18,23 +18,25 @@ import CatPawLoader from '../components/CatPawLoader';
 import api from '../services/api';
 import { getToken } from '../utils/authStorage';
 import { fetchAnimalsStart, fetchAnimalsSuccess, fetchAnimalsFailure } from '../redux/slices/animalsSlice';
+import { toggleFavorite } from '../redux/slices/favoritesSlice';
+import { RootState } from '../redux/types';
+import { useTheme } from '../context/ThemeContext';
 
 const PetListScreen = ({ navigation, route }: any) => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(route.params?.petType || 'Dogs');
   const dispatch = useDispatch();
+  const { colors } = useTheme();
 
   // Get data from Redux store
-  const petTypesState = useSelector((state: any) => state.petTypes);
-  const animalsState = useSelector((state: any) => state.animals);
+  const petTypesState = useSelector((state: RootState) => state.petTypes);
+  const animalsState = useSelector((state: RootState) => state.animals);
+  const favorites = useSelector((state: RootState) => state.favorites.items);
 
   // Add a state to store all animals
   const [filteredAnimals, setFilteredAnimals] = useState([]);
   const [selectedPetType, setSelectedPetType] = useState('');
-
-  // Add favorites state at component level
-  const [favorites, setFavorites] = useState<{ [key: string]: boolean }>({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,7 +52,6 @@ const PetListScreen = ({ navigation, route }: any) => {
     try {
       const token = await getToken();
       
-      // Fetch all animals without filtering by pet type
       const response = await api.post('/animals/search', 
         {
           search: searchQuery,
@@ -58,9 +59,9 @@ const PetListScreen = ({ navigation, route }: any) => {
           age: "",
           gender: "",
           page: 1,
-          limit: 100, // Increase limit to get more animals
+          limit: 100,
           breedType: "",
-          petType: "" // Empty to get all pet types
+          petType: ""
         },
         {
           headers: {
@@ -77,7 +78,6 @@ const PetListScreen = ({ navigation, route }: any) => {
       const data = response.data;
       console.log('Response data:', data);
       
-      // Store all animals in Redux
       dispatch(fetchAnimalsSuccess({
         data: data.data || [],
         total: data.total || 0,
@@ -85,7 +85,6 @@ const PetListScreen = ({ navigation, route }: any) => {
         limit: data.limit || 100
       }));
       
-      // Apply initial filtering
       filterAnimalsByPetType(route.params?.petType || selectedCategory);
     } catch (error) {
       console.error('Error fetching animals:', error);
@@ -95,17 +94,14 @@ const PetListScreen = ({ navigation, route }: any) => {
     }
   };
 
-  // Add a function to filter animals by pet type
   const filterAnimalsByPetType = (petTypeName) => {
     setSelectedPetType(petTypeName);
     
     if (!petTypeName || petTypeName === '') {
-      // If no pet type is selected, show all animals
       setFilteredAnimals(animalsState.animals);
       return;
     }
     
-    // Find the pet type ID from the Redux store
     const selectedPetTypeObj = petTypesState.petTypes.find(
       (pt) => pt.name === petTypeName
     );
@@ -115,7 +111,6 @@ const PetListScreen = ({ navigation, route }: any) => {
       return;
     }
     
-    // Filter animals by the selected pet type ID
     const filtered = animalsState.animals.filter(
       (animal) => animal.petType && animal.petType._id === selectedPetTypeObj._id
     );
@@ -123,12 +118,10 @@ const PetListScreen = ({ navigation, route }: any) => {
     setFilteredAnimals(filtered);
   };
 
-  // Update your useEffect to call filterAnimalsByPetType when animals or selected pet type changes
   useEffect(() => {
     filterAnimalsByPetType(selectedPetType);
   }, [animalsState.animals, selectedPetType]);
 
-  // Update your category selection handler
   const handleCategorySelect = (category) => {
     setSelectedCategory(category);
     setSelectedPetType(category);
@@ -140,19 +133,23 @@ const PetListScreen = ({ navigation, route }: any) => {
     fetchAnimals();
   };
 
-  const toggleFavorite = (petId: string, event: any) => {
-    event.stopPropagation();
-    setFavorites(prev => ({
-      ...prev,
-      [petId]: !prev[petId]
+  const handleToggleFavorite = (pet: any) => {
+    dispatch(toggleFavorite({
+      id: pet._id,
+      title: pet.name,
+      description: pet.breedType?.name || 'Unknown breed',
+      images: pet.images,
+      name: pet.name,
+      breedType: pet.breedType,
+      kms: pet.kms
     }));
-    console.log(`Toggling favorite for pet ID: ${petId}`);
   };
 
   const renderPetCard = ({ item }: any) => {
+    const isFavorited = favorites.some(fav => fav.id === item._id);
     return (
       <TouchableOpacity 
-        style={styles.petCard}
+        style={[styles.petCard, { backgroundColor: colors.card, shadowColor: colors.text }]}
         onPress={() => navigation.navigate('PetDetails', { petId: item._id })}
       >
         <View style={styles.imageContainer}>
@@ -161,38 +158,38 @@ const PetListScreen = ({ navigation, route }: any) => {
             style={styles.petImage} 
           />
           <TouchableOpacity 
-            style={styles.favoriteButton} 
-            onPress={(event) => toggleFavorite(item._id, event)}
+            style={[styles.favoriteIcon, { backgroundColor: 'rgba(0,0,0,0.5)' }]} 
+            onPress={() => handleToggleFavorite(item)}
           >
             <Ionicons 
-              name={favorites[item._id] ? "heart" : "heart-outline"} 
+              name={isFavorited ? "heart" : "heart-outline"} 
               size={24} 
-              color={favorites[item._id] ? "#FF6F61" : "#fff"} 
+              color={isFavorited ? "#FF6F61" : "#fff"} 
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.petName}>{item.name}</Text>
+        <Text style={[styles.petName, { color: colors.text }]}>{item.name}</Text>
         <View style={styles.petInfoRow}>
           <View style={styles.locationInfo}>
             <Ionicons name="location-outline" size={16} color="#FF6F61" />
-            <Text style={styles.distanceText}>{item.kms?.toFixed(1) || '1.2'} km</Text>
+            <Text style={[styles.distanceText, { color: colors.secondaryText }]}>{item.kms?.toFixed(1) || '1.2'} km</Text>
           </View>
-          <Text style={styles.breedText}>{item.breedType?.name}</Text>
+          <Text style={[styles.breedText, { color: colors.secondaryText }]}>{item.breedType?.name}</Text>
         </View>
       </TouchableOpacity>
     );
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Search Header */}
-      <View style={styles.searchHeader}>
+      <View style={[styles.searchHeader, { borderBottomColor: colors.border }]}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="black" />
+          <Ionicons name="arrow-back" size={24} color={colors.text} />
         </TouchableOpacity>
-        <Text style={styles.searchTitle}>Search Results</Text>
+        <Text style={[styles.searchTitle, { color: colors.text }]}>Search Results</Text>
         <TouchableOpacity onPress={() => setSearchQuery('')}>
-          <Ionicons name="search" size={24} color="black" />
+          <Ionicons name="search" size={24} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -207,7 +204,7 @@ const PetListScreen = ({ navigation, route }: any) => {
             <TouchableOpacity 
               style={[
                 styles.categoryButton, 
-                selectedCategory === (item.name || item) && styles.selectedCategory
+                selectedCategory === (item.name || item) && [styles.selectedCategory, { backgroundColor: colors.primary }]
               ]}
               onPress={() => handleCategorySelect(item.name || item)}
             >
@@ -240,7 +237,7 @@ const PetListScreen = ({ navigation, route }: any) => {
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>No pets found</Text>
+              <Text style={[styles.emptyText, { color: colors.text }]}>No pets found</Text>
             </View>
           }
         />
@@ -254,7 +251,6 @@ const PetListScreen = ({ navigation, route }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
   },
   searchHeader: {
     flexDirection: 'row',
@@ -263,7 +259,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E5E5',
   },
   searchTitle: {
     fontSize: 18,
@@ -304,8 +299,6 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 8,
     borderRadius: 12,
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
@@ -321,11 +314,10 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
   },
-  favoriteButton: {
+  favoriteIcon: {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: 'rgba(255, 157, 66, 0.8)',
     borderRadius: 20,
     padding: 6,
   },
@@ -348,12 +340,10 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     fontSize: 12,
-    color: '#666',
     marginLeft: 4,
   },
   breedText: {
     fontSize: 12,
-    color: '#666',
   },
   loaderContainer: {
     flex: 1,
@@ -368,7 +358,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 16,
-    color: '#666',
+    textAlign: 'center',
   },
 });
 
