@@ -265,9 +265,9 @@ const PetDetailsScreen = ({ route, navigation }: any) => {
           </Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={styles.adoptButton}>
+        {/* <TouchableOpacity style={styles.adoptButton}>
           <Text style={styles.adoptButtonText}>Adopt</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </SafeAreaView>
   );
