@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, SafeAreaView } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import store from '../redux/store';
 import { toggleFavorite } from '../redux/slices/favoritesSlice';
 import { RootState } from '../redux/types';
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
@@ -10,7 +9,7 @@ import BottomNavigation from '../components/common/BottomNavigation';
 import { useTheme } from '../context/ThemeContext';
 
 const Favorites = ({ navigation }: any) => {
-  const favorites = useSelector((store: RootState) => store.favorites.items);
+  const favorites = useSelector((state: RootState) => state.favorites.items);
   const dispatch = useDispatch();
   const { colors } = useTheme();
 
@@ -22,8 +21,16 @@ const Favorites = ({ navigation }: any) => {
     navigation.navigate('Dashboard');
   };
 
+  const handlePetPress = (petId: string) => {
+    navigation.navigate('PetDetails', { petId });
+  };
+
   const renderItem = ({ item }: { item: any }) => (
-    <View style={[styles.petCard, { backgroundColor: colors.card }]}>
+    <TouchableOpacity 
+      style={[styles.petCard, { backgroundColor: colors.card }]}
+      onPress={() => handlePetPress(item.id)}
+      activeOpacity={0.8}
+    >
       <View style={styles.imageContainer}>
         <Image 
           source={{ uri: `${item.images?.[0]}` }} 
@@ -31,7 +38,10 @@ const Favorites = ({ navigation }: any) => {
         />
         <TouchableOpacity 
           style={[styles.favoriteIcon, { backgroundColor: 'rgba(0,0,0,0.5)' }]} 
-          onPress={() => handleRemoveFromFavorites(item)}
+          onPress={(e) => {
+            e.stopPropagation(); // Prevent triggering the parent onPress
+            handleRemoveFromFavorites(item);
+          }}
         >
           <Ionicons name="heart" size={24} color="#FF6F61" />
         </TouchableOpacity>
@@ -43,7 +53,7 @@ const Favorites = ({ navigation }: any) => {
           {item.breedType?.name} • {item.kms?.toFixed(1) || '?'} km
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
