@@ -9,6 +9,7 @@ import {
   ScrollView,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BottomNavigation from '../components/common/BottomNavigation';
 import { useTheme } from '../context/ThemeContext';
 
@@ -24,10 +25,7 @@ const TermsOfServiceScreen = () => {
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
           >
-            <Image 
-              source={require('../assets/images/back_icon.png')} 
-              style={styles.inputIcon} 
-            />
+            <MaterialIcons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>Terms of Service</Text>
         </View>
@@ -80,10 +78,10 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  inputIcon: {
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
     marginRight: 12,
-    height: 20,
-    width: 20
   },
   title: {
     fontSize: 24,

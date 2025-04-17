@@ -5,6 +5,7 @@ import { toggleFavorite } from '../redux/slices/favoritesSlice';
 import { RootState } from '../redux/types';
 import FontAwesome6 from "react-native-vector-icons/FontAwesome6";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BottomNavigation from '../components/common/BottomNavigation';
 import { useTheme } from '../context/ThemeContext';
 
@@ -64,10 +65,7 @@ const Favorites = ({ navigation }: any) => {
             style={styles.backButton} 
             onPress={handleBack}
           >
-            <Image 
-              source={require('../assets/images/back_icon.png')} 
-              style={styles.inputIcon} 
-            />
+            <MaterialIcons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>Favorites</Text>
         </View>
@@ -106,10 +104,9 @@ const styles = StyleSheet.create({
   backButton: {
     padding: 8,
   },
-  inputIcon: {
-    marginRight: 12,
-    height: 20,
-    width: 20
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   title: {
     fontSize: 24,

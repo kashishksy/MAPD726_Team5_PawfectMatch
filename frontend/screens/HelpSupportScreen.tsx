@@ -10,6 +10,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BottomNavigation from '../components/common/BottomNavigation';
 import { useTheme } from '../context/ThemeContext';
 
@@ -52,10 +53,7 @@ const HelpSupportScreen = () => {
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
           >
-            <Image 
-              source={require('../assets/images/back_icon.png')} 
-              style={styles.inputIcon} 
-            />
+            <MaterialIcons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>Help & Support</Text>
         </View>
@@ -96,6 +94,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 8,
+  },
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginRight: 12,
   },
   inputIcon: {
     marginRight: 12,

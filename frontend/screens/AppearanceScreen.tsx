@@ -9,6 +9,7 @@ import {
   Switch,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { useTheme } from '../context/ThemeContext';
 import BottomNavigation from '../components/common/BottomNavigation';
 
@@ -25,10 +26,7 @@ const AppearanceScreen = () => {
             style={styles.backButton} 
             onPress={() => navigation.goBack()}
           >
-            <Image 
-              source={require('../assets/images/back_icon.png')} 
-              style={styles.inputIcon} 
-            />
+            <MaterialIcons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
           <Text style={[styles.title, { color: colors.text }]}>App Appearance</Text>
         </View>
@@ -83,9 +81,9 @@ const styles = StyleSheet.create({
     padding: 8,
     marginRight: 12,
   },
-  inputIcon: {
-    height: 20,
-    width: 20
+  backText: {
+    fontSize: 16,
+    fontWeight: '600',
   },
   title: {
     fontSize: 20,
