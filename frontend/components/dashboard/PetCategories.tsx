@@ -6,7 +6,7 @@ import { useTheme } from '../../context/ThemeContext';
 
 const PetCategories = ({ navigation }: any) => {
   const { petTypes, loading, error } = useSelector((state: any) => state.petTypes);
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
 
   const handleCategoryPress = (petType: string) => {
     // Navigate to pet type specific screen
@@ -29,6 +29,11 @@ const PetCategories = ({ navigation }: any) => {
     );
   }
 
+  // Define background color based on theme
+  const iconBackgroundColor = theme === 'dark' ? 
+    colors.card : // Use existing dark mode color
+    '#F0F0F0';    // Light grey for light mode
+
   return (
     <View style={styles.container}>
       <View style={styles.grid}>
@@ -38,7 +43,10 @@ const PetCategories = ({ navigation }: any) => {
             style={styles.categoryItem}
             onPress={() => handleCategoryPress(category.name)}
           >
-            <View style={[styles.iconContainer, { backgroundColor: colors.card }]}>
+            <View style={[
+              styles.iconContainer, 
+              { backgroundColor: iconBackgroundColor }
+            ]}>
               <Text style={styles.emoji}>{category.emoji}</Text>
             </View>
             <Text style={[styles.categoryName, { color: colors.text }]}>{category.name}</Text>
@@ -70,6 +78,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
   },
   emoji: {
     fontSize: 24,
