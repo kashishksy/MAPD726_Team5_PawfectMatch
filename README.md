@@ -10,11 +10,14 @@ A React Native application that helps users find and adopt pets from their nearb
 - Save favorite pets for later
 
 ## 📦 Tech Stack
-- **Frontend:** React Native, Expo
-- **State Management:** Redux / Context API
-- **Backend:** Firebase / Node.js
-- **Database:** Firestore / PostgreSQL
-- **API Integration:** Petfinder API (or similar)
+- **Frontend:** React Native
+- **State Management:** Redux
+- **Backend:** Express.js (Node.js)
+- **Authentication:** JWT (JSON Web Tokens)
+- **SMS Service:** Twilio
+- **File Storage:** Local Storage with Multer
+- **Database:** MongoDB
+- **API:** Custom RESTful API with Express.js
 
 ## 🛠 Installation
 1. Clone the repository:
