@@ -1,4 +1,4 @@
-# 🐾 Pet Adoption App
+# 🐾 Pawfect Match a pet adoption app
 
 A React Native application that helps users find and adopt pets from their nearby location.
 
